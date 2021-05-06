@@ -30,6 +30,7 @@ limitations under the License.
   - [## User Admin](#-user-admin)
   - [## Hardware](#-hardware)
   - [## File System](#-file-system)
+  - [File Operations](#file-operations)
   - [## Performance](#-performance)
   - [## Command Line](#-command-line)
   - [## Bash](#-bash)
@@ -307,7 +308,7 @@ limitations under the License.
   - Why doesn’t the user application run itself? 
   - *Because of protection ring levels.*
     - Users are ring3 while kernel is ring0.
-    - Further reference: https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjq4a6Hqa_wAhUbbn0KHcejC9sQFjACegQIBBAD&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FProtection_ring&usg=AOvVaw2j6xHm3h_xdrlxLVXAuy6K
+    - Further reference: [Wikipedia - Protection Ring](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjq4a6Hqa_wAhUbbn0KHcejC9sQFjACegQIBBAD&url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FProtection_ring&usg=AOvVaw2j6xHm3h_xdrlxLVXAuy6K)
 
 * User Space and Kernel Space
 
@@ -493,7 +494,7 @@ limitations under the License.
     - Explanation:
       1. ```Group Name:``` It is the name of group. If you run ls -l command, you will see this name printed in the group field.
       2.  ```Password:``` Generally password is not used, hence it is empty/blank. It can store encrypted password. This is useful to implement privileged groups.
-      3. ``Group ID (GID):``` Each user must be assigned a group ID. You can see this number in your /etc/passwd file.
+      3. ```Group ID (GID):``` Each user must be assigned a group ID. You can see this number in your /etc/passwd file.
       4. ```Group List:``` It is a list of user names of users who are members of the group. The user names, must be separated by commas.
     
 
@@ -693,326 +694,234 @@ dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
 ## File System
 ---
 
-* Linux file system description:
+* Linux File Systems Explained:
 
-http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/
+  [TLDP Article](http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/)
 
 * inodes
 
-```
-        An inode stores basic information about a regular file, directory, or other file system object
-        iNode number also called as index number, it consists following attributes:
+  - An inode stores basic information about a regular file, directory, or other file system object
+  - iNode number also called as index number, it consists following attributes:
 
-        File type (executable, block special etc)
-        Permissions (read, write etc)
-        Owner
-        Group
-        File Size
-        File access, change and modification time (remember UNIX or Linux never stores file creation
-        time, this is favorite question asked in UNIX/Linux sys admin job interview)
-        File deletion time
-        Number of links (soft/hard)
-        Extended attribute such as append only or no one can delete file including root user
-        (immutability)
-        Access Control List (ACLs)
-```
+   Attribute | Explanation
+   ---|---
+   File type | Executable, block special, etc.
+   Permissions |  Read, write, execute, etc.
+   Owner | Owner of the file
+   Group | Group the file belongs
+   File Size | Size in KB
+   File access, change and modification time | Reminder:  UNIX or Linux never stores file creation time. This is favorite question asked in interviews.
+   File deletion time | Time the file was deleted
+   Number of links (soft/hard) | As advertised
+   Extended attribute | Append only or no one can delete file including root user (immutability)
+   Access Control List (ACLs) | Table that tells a computer operating system which access rights each user has to a particular system object
+
+<br>
 
 * Show inodes of files and folders
 
-```
         ls -i
         stat
-```
-* Find where a commmand is executed from
-
-```
-        which
-        ie: which python  > /usr/bin
-```
-
-* list directories and recurse into subdirectories
-
-```
-        ls -r
-```
-
-* Find files bigger than 100m
-
-```
-        find . -size +100M
-```
-
-* Find files created within last 7 days
-
-```
-        find . -mtime -7
-```
-
-* Find files accessed within last 7 days
-
-```
-        find . -atime -7
-```
-
-* Find Disk Usage by Directory
-
-```
-        du -sh /home/*
-
-        #Using the -c option with the du command will show the grand total of used space for the designated directory
-```
-
-* check for bad blocks
-
-```
-        sudo badblocks -s /dev/sda
-```
-
-* Read speed test
-
-```
-        sudo hdparm -tT /dev/sda
-```
-
-* Write speed test. 16KB random write operations
-
-```
-        fio --directory=/media/p_iops_vol0 --name fio_test_file --direct=1 --rw=randwrite --bs=16k --size=1G --numjobs=16 --time_based --runtime=180 --group_reporting --norandommap
-```
 
 * Display mountpounts
 
-```
-        lsblk
+        lsblk #show all mounted drives
         findmnt #show mountpoints
         sudo fdisk -l
         df -h
         df -h --output=source,target
-```
 
-* Add a new EBS disk to  server
+* Add a new disk to RHEL server using LVM
 
-```
-        lsblk  #find drive which is not mounted
-        sudo mkfs -t ext4 /dev/xvdf #makes file system on /dev/xvdf)
-    (or sudo mkfs -it xfs /dev/xvdf #makes file system on /dev/xvdf)
-        sudo mkdir /mnt/my-data #make a mount point
-        sudo mount /dev/xvdf /mnt/my-data #mount device
-```
+  Step | Command | Explanation
+  -- | --- | ---
+  1 | lsblk -fp |  Find drive which is not mounted
+  2 | pvcreate /dev/sdx | Create new physical volume
+  3 | pvs | Show physical volume
+  4 | vgs | Show volume group
+  5 | vgextend <target_vg> /dev/sdx | Extend /dev/sdx to the target volume group
+  6 | vgs | Check again if the drive have been added
+  7 | lvs | Show all logical volume in the server
+  8 | lvextend -l +100%FREE -r <target_lv> | Extend 100% free capacity of /dev/sdx to the target logical volume. 
+
+<br>
+
+* Add a new Amazon EBS disk to server
+
+  Step | Command | Explanation
+  -- | --- | ---
+  1 | lsblk |  Find drive which is not mounted
+  2 | sudo mkfs -t ext4 /dev/xvdf OR sudo mkfs -it xfs /dev/xvdf | Makes file system on /dev/xvdf
+  3 | sudo mkdir /mnt/my-data | Make a mount point
+  4 | sudo mount /dev/xvdf /mnt/my-data | Mount device
+
+<br>
 
 * Show Physical Volumes
 
-```
-         pvdisplay
-```
+        pvdisplay
+        pvs
 
 * Create Volume Group
 
-    A group of physical volumes or disks are combined together into a single storage file which is referred to as the LVM volume group.
+  - A **group of physical volumes or disks are combined together into a single storage file** 
+  - Usually referred to as the **LVM volume group**.
 
-```
         sudo vgcreate <volume-name> <device-1> <device-2> <device-3>
-```
 
 * Create Logical Volumes
 
-```
         sudo lvcreate –name <logical-volume-name> –size <size-of-volume> <volume-group-name>
-```
 
 * Display Logical Volumes
 
-```
         sudo lvdisplay
-```
 
 * Format Logical Volume
 
-```
         mkfs -t ext4 /dev/<lvm-name>
-```
 
 * Zero Out all blocks for performance
 
-```
         if=/dev/zero of=/dev/xvdf bs=1M
-```
-
-* Create Raid0
-
-```
-        mdadm --create --verbose /dev/md0 --level=stripe --raid- devices=number_of_volumes device_name1 device_name2
-```
 
 * Resize Filesystem
 
-```
         resize2fs
-```
 
 * Raid Levels
 
-```
-        0 - Striped set without parity or Striping
-        1 - Mirrored set without parity or Mirroring
-        0+1 -  (increased speed) arrays are created and they are each mirrored via an overall RAID 1 (data backup) array. By definition, this configuration requires at least 4 drives.
-        5 - Provides both backup and increased speed. Additionally, a RAID 5 array can continue normally operating if one of its drives fails. The performance speed of the array will be reduced until the failed drive is replaced, but no data loss would occur. This array requires a minimum of 3 drives.
-        1+0 Mirrors two drives together and then creates a striped set with the pair.
-```
+Levels | Definition
+--- | ---
+RAID 0 | Striping
+RAID 1 | Mirroring
+RAID 5 | Striping with parity
+RAID 6 | Striping with double parity
+RAID 10 | Combining mirroring and striping
+<br>
+
+Type | Explanation | Required Disk (at least) | Benefits | Cons
+--- | --- | --- | --- | ---
+0 | Striped set without parity or Striping | 2 |  Easy to implement, All storage capacity is used | Not fault-tolerant
+1 | Mirrored set without parity or Mirroring | 2 | Excellent read/write speed, In case a drive fails data do not have to be rebuild | Do not always allow a hot swap, Storage capacity is only half of the total drive capacity
+0+1 | Hybrid - Arrays are created and they are each mirrored via an overall RAID 1 (data backup) array. | 4 | Increased speed, Backup safety | Complex technology
+5 | Consists of block-level striping with distributed parity | 3 | Backup safety, Increased speed, Fault-tolerant, No data lost | Complex technology, Drive failures have an effect on throughput
+1+0 | Mirrors two drives together and then creates a striped set with the pair. | 3 | Rebuild time is very fast | Half of the storage capacity goes to mirroring - Expensive Redundancy
+<br>
+
+* Creating RAID using mdadm 
+
+  - Create RAID
+
+        mdadm --create --verbose /dev/md0 --level=z --raid- devices=number_of_volumes device_name-x device_name-y
+
+  - Levels **(z)** will determine the RAID array created
+
+        0 - RAID 0
+        1 - RAID 1
+        5 - RAID 5
+        10 - RAID 10
+
+  - Further reference: [RAID Creation](https://www.digitalocean.com/community/tutorials/how-to-create-raid-arrays-with-mdadm-on-ubuntu-16-04)
 
 * Mount a new file system
 
-```
-        fdisk /dev/hda1  #create new partision
-        mkfs /dev/hda1  #create file system
-        mount -a        # causes all filesystems mentioned in fstab to be mounted
-```
+        fdisk /dev/hda1  # create new partision
+        mkfs /dev/hda1   # create file system
+        mount -a         # Mount all FS in /etc/fstab
+
 
 * Define boot disk
 
-```
-        cat /etc/fstab
-        # UUID=9246707a-30ab-47be-b78f-bb7b24a459a8 /     ext4    defaults     1 1
-        # ext4= filesystem , defaults = mount on boot
-```
+        vim /etc/fstab
+        
+        # Add entries as shown below
 
-* Copy Files from Remote Machine to Local Machine
+        UUID=62bc3131-c8dd-4287-9430-7cd471081663 /boot   xfs     defaults        0 0
+        
+        *xfs= filesystem
+        *defaults = mount on boot
 
-```
-        scp root@www.server.com:/root/file.sql /home/ec2-user
-```
+* Check for bad blocks
 
-* Copy Local directory to remote machine
+        sudo badblocks -s /dev/sda
 
-```
-        scp -rp sourcedirectory user@dest:/path
-```
+* Read speed test
 
-* Copy Remote directory to local path
+        sudo hdparm -tT /dev/sda
 
-```
-        scp -r user@your.server.example.com:/path/to/foo /home/user/Desktop/
-```
+* Write speed test. 16KB random write operations
 
-* Copy hello.txt from local computer to remote home directory
+        fio --directory=/media/p_iops_vol0 --name fio_test_file --direct=1 --rw=randwrite --bs=16k --size=1G --numjobs=16 --time_based --runtime=180 --group_reporting --norandommap
 
-```
-         scp hello.txt awshost1:~/
-```
+## File Operations
 
-* Copy hello.txt from local to remote home directory, renaming it foo.txt
+* Find where a commmand is executed from
 
-```
-        scp hello.txt awshost1:~/foo.txt
-```
+        which
+        ie: which python  > /usr/bin
 
-* Copying ~/foo.txt from the remote computer to the current local director
+* list directories and recurse into subdirectories
 
-```
-        scp awshost1:~/foo.txt .
-```
+        ls -r
 
-* Copying ~/foo.txt from remote to local directory cc, renaming it a.b
+* Find files bigger than 100m
 
-```
-        scp awshost1:~/foo.txt cc/a.b
-```
+        find . -size +100M
 
-* Compress a directory
+* Find files created within last 7 days
 
-```
-        tar -zcvf archive-name.tar.gz directory-name
-        -c = create
-        -f = following is archive name
-        -v = verbose
-        -z = gzip
-```
+        find . -mtime -7
 
-* To append file to archive
+* Find files accessed within last 7 days
 
-```
-        tar rvf archive_name.tar new file.txt
-```
+        find . -atime -7
 
-* Encrypt a file:
+* Find Disk Usage by Directory
 
-```
-        gpg -o [outputfilename.gpg] -c [target file]
-```
+        du -sh /home/*
 
-* Decrypt a file:
-
-```
-        gpg -o [outputfilename] -d [target.gpg]
-```
-
-* Uncompress file
-
-```
-        unzip filename.zip
-```
-
-* Open a compressed .tgz or .tar.gz file:
-
-```
-        tar -xvf [target.tgz]
-        tar -xvf —strip-components 1  # extracts without its parent folder
-        tar -xvf -C  # extracts to a different directory
-```
+  - Using the ```-c``` option with the ```du``` command will show the grand total of used space for the designated directory
 
 * Find Files
 
-```
         Find . -name http*
-```
 
 * Find all files not owned by root:
 
-```
         find . \! -user root -print
-```
 
 * Find all files not with permissions 644:
 
-```
         find . \! -perm 644 root -print
-```
 
 * Find files matching [filename]:
 
-```
         locate [filename]
-```
 
-* Show a file type
+* Check a file type
 
-```
-        file image.jpg
-```
+        file <filename>
 
-* Show uncommented items in config files
+* Show uncommented items in config file
 
-```
-        grep -v "#" file.conf
-```
+        grep -v '^\s*$\|^\s*\#' temp
 
 * Search for a given string in all files recursively
 
-```
         grep -r "ramesh" *
-```
 
 * View the differences between two files:
 
-```
-        diff [file 1] [file 2]
-```
+        sdiff [file 1] [file 2]
 
 * Change File Permissions
 
-```
+        # Examples
         chmod 775 filename
-        chmod o+r file.txt  # o=other +=add r=read
+        chmod o+r file.txt
+
+        # Options
         7 = Read + Write + Execute
         6 = Read + Write
         5 = Read + Execute
@@ -1021,119 +930,181 @@ http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/
         2 = Write
         1 = Execute
         0 = All access denied
-        First number is for the owner, second for the group, and third for everyon
-```
-        http://permissions-calculator.org/
 
-        ![alt text](permissions.jpg "Permissions")
+        + - add
+        - - remove
+
+        u - user
+        g - group
+        o - other
+
+        r - read
+        w - write
+        x - execute
+        
+
+  - First number is for the owner, second for the group, and third for everyone.
+  - How to calculate permission? Use [Calculate Permission](http://permissions-calculator.org/)
 
 * Permissions On Folders
 
-```
         r: read only the names of the files in the directory
         w: create and delete of the files in the directory
         x: traverse the directory
-```
 
 * Permissions On files
 
-```
         r: open a file for reading (e.g. with the cat command)
         w: write a file (e.g. use sed -i (inplace) on it)
         x: execute a file
-        It is important to note that a script can be executed even by a user who doesn’t have the execute permission on it. Passing a python script path to the python executable will cause python to open the file for reading and then interpret it. So it is not safe to rely on the executable permission for security. This goes for php, perl, ruby, javascript, etc, etc
-```
+
+  - It is important to note that a script can be executed even by a user who doesn’t have the execute permission on it. 
+  - Passing a Python script path to the Python executable will cause Python to open the file for reading and then interpret it.
+  - **So it is not safe to rely on the executable permission for security.**
+  - This goes for PHP, Perl, Ruby, Javascript, etc.
 
 * Copy permissions of one file onto another
 
-```
         getfacl FILE1 | setfacl –set-file=- FILE2
-```
 
 * Show permissions on all directories in a tree
 
-```
         namei -om /var/www/iddb.com/static
-```
 
 * Remove directory
 
-```
         rmdir directory
-```
 
-* Logs
+* Copy Files from Remote Machine to Local Machine
+
+        scp user@source:/path destdirectory
+
+* Copy Local directory to remote machine
+
+        scp -rp sourcedirectory user@dest:/path
+
+* Copy Remote directory to local path
+
+        scp -r user@your.server.example.com:/path/to/foo /home/user/Desktop/
+
+* Copy hello.txt from local computer to remote home directory
+
+         scp hello.txt awshost1:~/
+
+* Copy hello.txt from local to remote home directory, renaming it foo.txt
+
+        scp hello.txt awshost1:~/foo.txt
+
+* Copying ~/foo.txt from the remote computer to the current local director
+
+        scp awshost1:~/foo.txt .
+
+* Copying ~/foo.txt from remote to local directory cc, renaming it a.b
+
+        scp awshost1:~/foo.txt cc/a.b
+
+* Compress a directory
+
+        tar -zcvf archive-name.tar.gz directory-name
+        
+        -c = create
+        -f = following is archive name
+        -v = verbose
+        -z = gzip
+
+* To append file to archive
 
 
-```
-auth.log				Authentication logs
-boot.log				Boot logs
-btmp					Invalid login attempts
-cron                 	Cron logs
-daemon.log        		Logs for specific services (daemons)
-dmesg					Kernel boot messages
-httpd/					Apache logs
-kern.log				Kernel logs
-mail*					Mail server logs
-messages				General/all logs
-mysql*					MySQL logs
-secure					Security/authentication logs
-syslog					All system logs
-wtmp					User logins and logouts
-```
+        tar rvf archive_name.tar new file.txt
 
-* Check Logs
+* Encrypt a file:
 
-```
-        less /var/log/messages
-        less /var/log/secure
-        less /var/log/auth
-```
+        gpg -o [outputfilename.gpg] -c [target file]
 
-* Check disk space
+* Decrypt a file:
 
-```
-        df -h # For human readable
-```
+        gpg -o [outputfilename] -d [target.gpg]
+
+* Uncompress file
+
+        unzip filename.zip
+
+* Open a compressed .tgz or .tar.gz file:
+
+        # Normal extract
+        tar -xzvf [target.tgz]
+
+        # Extracts without its parent folder
+        tar -xzvf —strip-components 1 [target.tgz]
+
+        # Extracts to a different directory
+        tar -xzvf -C [target.tgz]
 
 * Config Files
 
-```
-        /etc/login.def - default settings template for new user accounts
-        /etc/motd - message of the day
-        /etc/inittab - defines default runlevel #id:3:initdefault:
-```
+  - Most of the config files are located in /etc
 
+        # Default settings template for new user accounts
+        /etc/login.def
+
+        # Message of the day
+        /etc/motd
+
+        # Default run-level
+        /etc/inittab - *id:3:initdefault:
+
+* Logs
+
+Name | Function
+--- | ---
+auth.log		|		Authentication logs
+boot.log		|		Boot logs
+btmp			|		Invalid login attempts
+cron                 	|                Cron logs
+daemon.log        	|	        Logs for specific service (daemons)
+dmesg			|		Kernel boot messages
+httpd/			|		Apache logs
+kern.log		|		Kernel logs
+mail*			|		Mail server logs
+messages		|		General/all logs
+mysql*			|		MySQL logs
+secure			|		Security/authentication logs
+syslog			|		All system logs
+wtmp			|		User logins and logouts
+<br>
+
+* Check Logs
+
+  - You can use a lot of ways to check the logs
+  - ```less``` is an option not just **THE** option. 
+  
+        less /var/log/messages
+        less /var/log/secure
+        less /var/log/auth
+
+* Check disk space
+
+        df -h # For human readable
 
 
 * Check file system consistency
 
-```
         Goto single user mode:
         # init 1
+
         Unmount file system:
         # umount /dev/sdb1
+
         Now run fsck command:
         # fsck /dev/sdb1
-```
-
-* Check a files type
-
-```
-        file <filename>
-```
 
 * Generate md5
 
-```
         md5 <filename>
-```
 
 * Generate sha256
 
-```
         openssl sha -sha256 <filename> (mac)
-```
 
 * Symbolic Links
 
@@ -1151,55 +1122,55 @@ ln -s /path/to/original /path/to/symlink
 
 * Change the open files limit from 1024 to 10240 d
 
-```
-        ulimit -n 10240                    # This is only valid within the shell
-```
+        ulimit -n 10240     # This is only valid within the shell
 
-* Login users and applications can be configured in /etc/security/limits.conf
+  - Login users and applications can be configured in /etc/security/limits.conf
 
 * System wide limits
 
-```
-    sysctl -a                          # View all system limits
-    sysctl fs.file-max                 # View max open files limit
-    sysctl fs.file-max=102400          # Change max open files limit
-    echo "1024 50000" > /proc/sys/net/ipv4/ip_local_port_range  # port range
-    cat /etc/sysctl.conf
-    fs.file-max=102400                   # Permanent entry in sysctl.conf
-    cat /proc/sys/fs/file-nr           # How many file descriptors are in use
-```
+    Command | Explanation
+    --- | ---    
+    sysctl -a                    |      # View all system limits
+    sysctl fs.file-max           |      # View max open files limit
+    sysctl fs.file-max=102400    |      # Change max open files limit
+    echo "1024 50000" > /proc/sys/net/ipv4/ip_local_port_range | # Port range
+    cat /etc/sysctl.conf       |        # Show default system wide limits config
+    fs.file-max=102400         |        # Permanent entry in sysctl.conf
+    cat /proc/sys/fs/file-nr   |        # How many file descriptors are in use
+<br>
 
 * Find opened files on a mount point with fuser
 
-```
         fuser -m /home
-```
 
 ## Performance
 ---
 
 * Load Average
 
-        The "number of cores = max load"
-        The three numbers represent averages over progressively longer periods of time (one, five, and fifteen minute averages)
-        Rule of Thumb: on a multicore system, your load should not exceed the number of cores available.
-        On a dual-core CPU, I won't even think about it until load gets and stays above 1.7 or so
-        Which average should I be observing? One, five, or 15 minute?, you should be looking at the five or 15-minute averages. Frankly, if your box spikes above 1.0 on the one-minute average, you're still fine. It's when the 15-minute average goes north of 1.0 and stays there that you need to snap to.
-        how do I know how many cores my system has? grep 'model name' /proc/cpuinfo | wc -l
+  - The "Number of cores = MAX load"
+  - The three numbers represent averages over progressively longer periods of time.
+    - 1, 5, and 15 minutes averages
+  - Rule of Thumb: 
+    - On a multicore system, your load should not exceed the number of cores available.
+    - On a dual-core CPU, I won't even think about it until load gets and stays above 1.7 or so
+  - Which average should I be observing? One, five, or 15 minute?
+    - You should be looking at the five or 15-minute averages. 
+  - Frankly, if your box spikes above 1.0 on the one-minute average, you're still fine.
+  - It's when the 15-minute average goes north of 1.0 and stays there that you need to snap to.
+  - How do I know how many cores my system has? 
+  ```grep 'model name' /proc/cpuinfo | wc -l```
 
 
 * Show running services with their ports
 
-```
-lsof -i     # Monitors real-time network connections
-```
+        lsof -i     # Monitors real-time network connections
+
 
 * Show what files a process has open
 
-```
         lsof -p $PID
         netstat -lptu
-```
 
 * top
 
