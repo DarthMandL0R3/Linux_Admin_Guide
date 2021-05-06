@@ -32,6 +32,36 @@ limitations under the License.
   - [## File System](#-file-system)
   - [## File Operations](#-file-operations)
   - [## Performance](#-performance)
+  - [## Command Line](#-command-line)
+  - [## Bash](#-bash)
+  - [## Networking](#-networking)
+  - [## Netcat](#-netcat)
+  - [## Sshuttle](#-sshuttle)
+  - [## Mitmproxy](#-mitmproxy)
+  - [## Screen](#-screen)
+  - [## Python](#-python)
+  - [## iptables](#-iptables)
+  - [## firewalld](#-firewalld)
+  - [## SELINUX](#-selinux)
+  - [## YUM](#-yum)
+  - [## Cron](#-cron)
+  - [## SSH](#-ssh)
+  - [## Apache](#-apache)
+  - [## SSL](#-ssl)
+  - [## PHP](#-php)
+  - [## MySQL](#-mysql)
+  - [## Memcache](#-memcache)
+  - [## GIT](#-git)
+  - [## Jq](#-jq)
+  - [## Rsync](#-rsync)
+  - [## Nginx](#-nginx)
+  - [## Rsyslog](#-rsyslog)
+  - [## Tmux](#-tmux)
+  - [## VIM](#-vim)
+  - [## Systemd](#-systemd)
+  - [## Systemd (Generic)](#-systemd-generic)
+  - [## SQL](#-sql)
+  - [## Regex](#-regex)
   - [## GPG](#-gpg)
 
 ## Boot
@@ -499,7 +529,7 @@ limitations under the License.
     ```
   - Applicable for all users but root.
   - The message in nologin will be displayed.
-  - *Might not work with ssh pre-shared keys.* 
+  - *Might not work users with SSH pre-shared keys.* 
 
 ## Hardware
 ---
@@ -512,11 +542,6 @@ limitations under the License.
 * Print the hostname of this machine:
     ```
     echo $HOSTNAME
-    ```
-
-* Print the default file permissions (Subtract from 777):
-    ```
-    echo $umask
     ```
 
 * Print the session timeout:
@@ -626,12 +651,29 @@ limitations under the License.
     3. ```The boot code signature``` which is 2 bytes long.
 
 
+* Checking if system time is syncing with NTP
+
+```
+timedatectl                 # Check command
+timedatectl set-ntp true    # Set NTP true
+```
+
 * Sync NTP time
 
 ```
 sudo service ntp stop
 sudo ntpdate -s time.nist.gov
 sudo service ntp start
+```
+
+* Sync NTP time with chrony
+
+```
+sudo yum install chrony
+sudo systemctl enable chronyd
+sudo systemctl start chronyd
+chronyc tracking
+chronyc sources
 ```
 
 * Show Memory information
@@ -917,6 +959,11 @@ Type | Explanation | Required Disk (at least) | Benefits | Cons
   - First number is for the owner, second for the group, and third for everyone.
   - How to calculate permission? Use [Calculate Permission](http://permissions-calculator.org/)
 
+* Print the default file permissions (Subtract from 777):
+    ```
+    echo $umask
+    ```
+
 * Permissions On Folders
 
         r: read only the names of the files in the directory
@@ -1147,11 +1194,11 @@ ln -s /path/to/original /path/to/symlink
 
     ![Top](attachments/topoutput.jpg)
 
-    uppercase M sorts by memory
+  - Toggle Keys
+    - Upper case **M** -> Sorts by memory usage
+    - Lower case **c** -> Shows full command list
 
-    lowercase c shows full command
 
-```
 
     * check i/o wait for server slowness - Represents CPU waiting for disk I/O. if it is low then you can rule out disk access. GT > 10% is high means Disk is slow
     * CPU idle. higher the number the more bandwidth available to server. Should be >25%
@@ -1170,7 +1217,6 @@ ln -s /path/to/original /path/to/symlink
     * swap: cached: caches files in the filesystem in memory for better performance. Uses spare memory
     * SwapTotal, SwapFree. If they are equal there is no swapping going on
 
-```
 
 * Show open tcp sockets
 
@@ -1266,17 +1312,30 @@ ln -s /path/to/original /path/to/symlink
 
 * How much memory is left
 
-```
-llllll
-```
+        free -m
+
+  - ```Free:``` memory that is currently not used for anything. It should be small since memory shouldn’t be wasted
+  - ```Available:``` amount available for allocation to new process. Modern operating systems go out of their way to keep as little memory free as possible.
+  - **Things to be aware:**
+    - Memory that is free is actually harder to use because it has to be transitioned from free to in use. 
+    - Memory that is already in use, that is, memory that is available but not free, can easily be switched to another use.
+    - The "buffers" and "cached" will be released by the kernal if they are needed.
+
+* Are we using swap space?
+
+        vmstat 1
+
+* Top 10 Memory Hogs!
+
+        ps aux --sort=-resident | head -11
+
+* Tail all queries running against MySQL
+
         pt-query-digest --processlist h=localhost --print --no-report --user xxxx --password *****
-```
 
 * Check readwrite per sec on disk
 
-```
         iostat -xnk 5
-```
 
 * How much io disk or network is getting or sending
 
@@ -1335,40 +1394,16 @@ llllll
 
 * Test if a specific TCP/IP port is open with round trip
 
-          hping3 www.google.com -S -V -p 443
-          -S Sets the SYN tcp flag
+        hping3 www.google.com -S -V -p 443 
+        # -S -> Sets the SYN TCP flag
 
 * View Services Startup
 
         chkconfig --list
 
-* Runlevels
-
-```
-Red Hat as well as most of its derivatives (such as CentOS) uses runlevels like this:
-
-
-ID Description
-0 Halt
-1 Single user
-2 Full multi-user with no networking
-3 Full multi-user, console logins only
-4 Not used/User definable
-5 Full multi-user, with display manager as well as console logins
-6 Reboot
-The default runlevel is set in the /etc/inittab file with the :initdefault: entry
-The default run level is 5. To disable a
-service, run the following command:
-/sbin/chkconfig servicename off
-Unless they are required, disable the following:
-anacron haldaemon messagebus apmd hidd microcode_ctl autofs` hplip* pcscd avahi-daemon* isdn readahead_early bluetooth kdump readahead_later cups* kudzu rhnsd* firstboot mcstrans setroubleshoot gpm mdmonitor xfs.
-Items marked with a * are network services. It is particularly important to disable these. Additionally, the following services can be safely disabled if NFS is not in use: netfs, nfslock, portmap, rpcgssd, and rpcidmapd. Some software relies on haldaemon and messagebus, so care should be taken when disabling them
-```
-
 * Auto Start Service
 
         chkconfig httpd on
-
 
 * Restart Service
 
@@ -1380,8 +1415,6 @@ Items marked with a * are network services. It is particularly important to disa
 
         kill -HUP 128
         This causes the program to restart and examine its configuration files.
-
-*
 
 ## Command Line
 ---
@@ -3790,7 +3823,7 @@ Check out more resources below to learn about other stuff jq can do!
     n       Search for next instance of string
     N       Search for previous instance of string
 
-## SystemD
+## Systemd
 ---
 
 ```
@@ -3900,7 +3933,7 @@ Delete old logs
 sudo journalctl --vacuum-size=1G
 ```
 
-## SystemD (Generic)
+## Systemd (Generic)
 ----
 
 * Create a service
