@@ -30,38 +30,8 @@ limitations under the License.
   - [## User Admin](#-user-admin)
   - [## Hardware](#-hardware)
   - [## File System](#-file-system)
-  - [File Operations](#file-operations)
+  - [## File Operations](#-file-operations)
   - [## Performance](#-performance)
-  - [## Command Line](#-command-line)
-  - [## Bash](#-bash)
-  - [## Networking](#-networking)
-  - [## Netcat](#-netcat)
-  - [## Sshuttle](#-sshuttle)
-  - [## Mitmproxy](#-mitmproxy)
-  - [## Screen](#-screen)
-  - [## Python](#-python)
-  - [## iptables](#-iptables)
-  - [## firewalld](#-firewalld)
-  - [## SELINUX](#-selinux)
-  - [## YUM](#-yum)
-  - [## Cron](#-cron)
-  - [## SSH](#-ssh)
-  - [## Apache](#-apache)
-  - [## SSL](#-ssl)
-  - [## PHP](#-php)
-  - [## MySQL](#-mysql)
-  - [## Memcache](#-memcache)
-  - [## GIT](#-git)
-  - [## Jq](#-jq)
-  - [## Rsync](#-rsync)
-  - [## Nginx](#-nginx)
-  - [## Rsyslog](#-rsyslog)
-  - [## Tmux](#-tmux)
-  - [## VIM](#-vim)
-  - [## SystemD](#-systemd)
-  - [## SystemD (Generic)](#-systemd-generic)
-  - [## SQL](#-sql)
-  - [## Regex](#-regex)
   - [## GPG](#-gpg)
 
 ## Boot
@@ -133,7 +103,7 @@ limitations under the License.
   - As you notice from the above info, it contains kernel and initrd image.
   - So, in simple terms GRUB2 just loads and executes Kernel and initrd images.
 
-  - Further reference: https://www.thegeekdiary.com/centos-rhel-7-grub2-configuration-file-bootgrub2grub-cfg-explained/
+  - Further reference: [TGK - Grub2 Configuration](https://www.thegeekdiary.com/centos-rhel-7-grub2-configuration-file-bootgrub2grub-cfg-explained/)
 
 * Kernel
 
@@ -855,6 +825,7 @@ Type | Explanation | Required Disk (at least) | Benefits | Cons
         fio --directory=/media/p_iops_vol0 --name fio_test_file --direct=1 --rw=randwrite --bs=16k --size=1G --numjobs=16 --time_based --runtime=180 --group_reporting --norandommap
 
 ## File Operations
+---
 
 * Find where a commmand is executed from
 
@@ -1174,7 +1145,7 @@ ln -s /path/to/original /path/to/symlink
 
 * top
 
-    ![alt text](topoutput.jpg "Top")
+    ![Top](attachments/topoutput.jpg)
 
     uppercase M sorts by memory
 
@@ -1296,27 +1267,7 @@ ln -s /path/to/original /path/to/symlink
 * How much memory is left
 
 ```
-        free -m
-
-        Free: memory that is currently not used for anything. It should be small since memory shouldn’t be wasted
-        Available: amount available for allocation to new process. Modern operating systems go out of their way to keep as little memory free as possible. Memory that is free is actually harder to use because it has to be transitioned from free to in use. Memory that is already in use, that is, memory that is available but not free, can easily be switched to another use.
-        The "buffers" and "cached" will be released by the kernal if they are needed.
-```
-
-* Are we swapping
-
-```
-        vmstat 1
-```
-
-* Top 10 memory hogs
-
-```
-        ps aux --sort=-resident|head -11
-```
-
-* Tail all queries running against mysql
-
+llllll
 ```
         pt-query-digest --processlist h=localhost --print --no-report --user xxxx --password *****
 ```
