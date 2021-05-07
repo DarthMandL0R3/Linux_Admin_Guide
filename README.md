@@ -1198,40 +1198,37 @@ ln -s /path/to/original /path/to/symlink
     - Upper case **M** -> Sorts by memory usage
     - Lower case **c** -> Shows full command list
 
+* What to consider in terms of performance?
 
-
-    * check i/o wait for server slowness - Represents CPU waiting for disk I/O. if it is low then you can rule out disk access. GT > 10% is high means Disk is slow
-    * CPU idle. higher the number the more bandwidth available to server. Should be >25%
-    * User Time - if idle time is low, you can expect this to be high. Find process taking up cpu
-    *  Memory usage: don't look at the "free" memory -- it's misleading. To get the actual memory available, subtract the "cached" memory from the "used" memory. This is because Linux caches things liberally, and often the memory can be freed up when it's needed
-    * Stealtime = virtual machines are competing for resources. If %st increases on all VM's, means your VM is using too much cpu. elif %st increases on just one VM = Physical is oversold
-    * cpu: usertime (time spent on processor running your program). System is the time spent in operating system kernel
-    * iowait: time cpu waiting for disk or network io.
-    * load: is how many processes are waiting to run
-        - < 0.7 = healthy (on single core machine)
-        - 1.0 = system is fully used (on single core machine)
-        - 1.0 on single core, 4.0 on quad core
-        - broken down by one minute, 5 minutes, 15 minutes
-        - lscpu: shows how many cores
-    * Memory: true memory usage is memory used - swap cached
-    * swap: cached: caches files in the filesystem in memory for better performance. Uses spare memory
-    * SwapTotal, SwapFree. If they are equal there is no swapping going on
-
+Key | What to look for?
+--- | ---
+io wait | Represents CPU waiting for disk I/O. Check for server slowness. If it is low then you can rule out disk access. GT > 10% is high means disk is slow.
+CPU idle time | Higher the number the more bandwidth available to server. Should be >25%
+CPU user time | Time spent on processor running your program. If idle time is low, you can expect this to be high. Find process taking up CPU.
+CPU system time | The time spent in operating system kernel.
+CPU steal time | Virtual machines are competing for resources. If %st increases on all VM's, means your VM is using too much cpu. elif %st increases on just one VM = Physical is oversold.
+Memory Usage | Don't look at the "free" memory -- it's misleading. To get the actual memory available, subtract the "cached" memory from the "used" memory. This is because Linux caches things liberally, and often the memory can be freed up when it's needed
+Memory Usage* | True memory usage = Memory used - Swap cached
+Load | How many processes are waiting to run?
+Load * | < 0.7 = healthy (on single core machine)
+Load * | 1.0 = system is fully used (on single core machine)
+Load * | 1.0 on single core, 4.0 on quad core
+Load * | Broken down by one minute, 5 minutes, 15 minutes
+Load * | ```lscpu``` - Shows how many cores available
+Swap cached |  Caches files in the filesystem in memory for better performance. Uses spare memory
+Swap total vs Swap free | If they are equal there is no swapping going on
+<br>
 
 * Show open tcp sockets
-
-```
+  
         lsof -nPi tcp
 
-        -n	: This option inhibits the conversion  of  network  numbers  to  host  names  for  network  files.
-         Inhibiting  conversion may make lsof run faster.  It is also useful when host name lookup is not
-         working properly.
-        -P : This option inhibits the conversion of port numbers to port names for network files.  Inhibiting
-         the  conversion  may  make lsof run a little faster.  It is also useful when port name lookup is
-         not working properly.
-        -i [tcp] : This  option  selects  the  listing  of  files any of whose Internet address matches the address
-         specified in i.
-```
+Key | Usage
+--- | ---
+-n | This option inhibits the conversion  of  network  numbers  to  host  names  for  network  files. Inhibiting  conversion may make lsof run faster.  It is also useful when host name lookup is not working properly.
+-P | This option inhibits the conversion of port numbers to port names for network files.  Inhibiting the  conversion  may  make lsof run a little faster.  It is also useful when port name lookup is not working properly.
+-i [tcp] | This  option  selects  the  listing  of  files any of whose Internet address matches the address specified in i.
+<br>
 
 * Show bandwidth usage per connection
 
