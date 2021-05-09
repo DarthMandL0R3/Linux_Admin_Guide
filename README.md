@@ -36,14 +36,14 @@ limitations under the License.
   - [## Bash](#-bash)
   - [## Networking](#-networking)
   - [## Netcat](#-netcat)
-  - [## Sshuttle](#-sshuttle)
-  - [## Mitmproxy](#-mitmproxy)
-  - [## Screen](#-screen)
-  - [## Python](#-python)
   - [## iptables](#-iptables)
   - [## firewalld](#-firewalld)
   - [## SELINUX](#-selinux)
   - [## YUM](#-yum)
+  - [## Python](#-python)
+  - [## Sshuttle](#-sshuttle)
+  - [## Mitmproxy](#-mitmproxy)
+  - [## Screen](#-screen)
   - [## Cron](#-cron)
   - [## SSH](#-ssh)
   - [## Apache](#-apache)
@@ -1939,7 +1939,7 @@ Key | Explanation
 
 * Query DNS
 
-- Using `dig` command:
+  - Using `dig` command:
 
   Command | Purpose
   --- | ---
@@ -1993,250 +1993,158 @@ Key | Explanation
 ---
 
 * Portscan
-  
-```
-        nc -z example.com 20-100 	#scan port 20-100
-```
+
+        nc -z example.com 20-100 	# Scan port 20-100
+
 * Copy files between two hosts
 
-```
         Server: $ nc -l 9090 | tar -xzf -
         Client: tar -czf dir/ | nc server 9090
-```
 
 * Expose a shell over port 8080
-  
-```
-        server:
-        $ mkfifo backpipe $ nc -l 8080  0<backpipe | /bin/bash > backpipe
-        Client:
-        nc example.com 8080
-```
 
-* receive file
+        # Server:
+        $ mkfifo backpipe 
+        $ nc -l 8080  0<backpipe | /bin/bash > backpipe
+        
+        # Client:
+        $ nc example.com 8080
 
-```
+* Receive file
+
         nc -l 9931 > bigfile
-```
 
-* send file
+* Send file
 
-```
-        cat bigfile | nc ipaddress 9931
-```
+        cat bigfile | nc <ip_add> 9931
 
-```
-        nc -l -p 1234 #starts a server on port 1234
-        nc destination_host 1234 # connect to server from client
-        tar cfp - /some/dir | compress -c | nc -w 3 destination_host 1234 # compress file and send to remove
-```
+* Commands to send a file between a server and client 
+        
+        # Starts a server on port 1234
+        nc -l -p 1234
 
+        # Connect to server from client
+        nc dest_host 1234
 
-## Sshuttle
----
-
-* Tunnel traffic to any server you have ssh access to including dns
-
-```
-        sshuttle -r <server> --dns 0/0
-```
-
-## Mitmproxy
----
- Allows you to inspect https traffic
-
-* Automatically strip all cache control headers and make sure you always get fresh connection
-
-```
-        mitmproxy --anticache
-```
-
-* Record a session
-
-```
-        mitmdump -w user-signup
-```
-* Replay a sessio
-
-```
-        mitmdump -c user-signup | tail -n1 | grep 200 && echo "OK" || echo "FAIL"
-```
-* Disable ping to avoid ICMP flood
-
-```
-        Set following in /etc/sysctl.conf : net.ipv4.icmp_echo_ignore_all = 1
-        Then “sysctl -p”
-```
-
-* Show Public IP Address
-
-```
-        ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//'
-```
-* Show SYN Flood
-
-```
-        ss -a | grep SYN-RECV | awk '{print $4}' | awk -F":" '{print $1}' | sort | uniq -c | sort -n
-        or
-        netstat -antp | grep SYN_RECV|awk '{print $4}'|sort|uniq -c | sort -n
-```
-
-
-## Screen
----
-* Config File
-
-        ~/.screenrc
-
-* Commands
-
-        screen -ls    # show all screens
-        CTRL a w      # which screens are available
-        CTRL a 0      # go to window 0
-        CTRL a 1      # go to window 1
-        CTRl a D      # detach from current session
-        CTRL a c      # create a new screen
-        CTRL a n      # go to next screen
-        CTRL a A      # rename session name
-        CTRL a S      # split screen horizontal
-        CTRL a TAB    # move to next split screen
-        CTRL a |      # split screen vertical
-        CTRL A X      # close current split screen
-        CTRL A -      # switches to last window
-        Exit          # kill current session
-        screen -r     # reattach to screen
-
-## Python
----
-
-* update pip (Python package manager):
-
-```
-        pip install -U pip
-```
-* search pip repos
-
-```
-        pip
-```
-* create a virtual python environment
-
-```
-        virtualenv [dirname] --no-site-packages
-```
-* connect to a virtual python environment
-
-```
-        source [dirname]/bin/activate
-```
-* disconnect from a python environment:
-
-```
-        deactivate
-```
-* install package into virtual python environment from outsie:
-
-```
-        pip install [packagename]==[version_number] -E [dirname]
-```
-* export python virtual environment into a shareable format:
-
-```
-        pip freeze -E [dirname] > requirements.txt
-```
-* import python virtual environment from a requirements.txt file:
-
-```
-        pip install -E [dirname] -r requirements.txt
-```
-* Share all files in current folder over port 8080
-
-```
-        python -m SimpleHTTPServer 8080
-```
-
-
+        # Compress file and send to remote
+        tar cfp - /some/dir | compress -c | nc -w 3 dest_host 1234 
 
 ## iptables
 ---
 
 * Show config
 
-```
         iptables -L -v
-```
+
 * Edit config
 
-```
         /etc/sysconfig/iptables
-```
+
 * Allow connections for all tcp connections attempts at web connections.
 
-```
         sudo iptables -I INPUT 2 -p tcp  --dport 80 -j ACCEPT
-```
 
 * Lockdown connections to any IP address lying in the range of 192.168.1.0 - 192.168.1.255
 
-```
         sudo iptables -I INPUT 2 -p tcp --dport 22 -s 192.168.1.0/24 -j ACCEPT
-```
-* Lockdown SSH to kick anyone after 3 attempts
 
-```
-Replace default ssh rule with this one.
-The first rule records the IP address of each attempt to access port 22 using the recent module.
-The second rule checks to see if that IP address has attempted to connect 4 or more times within the last 60 seconds, and if not then the packet is accepted.
-Note this rule would require a default policy of DROP on the input chain.
+* Lock SSH and kick users after 3 failed attempts
 
-iptables -A INPUT -p tcp --dport 22 -m recent --set --name ssh --rsource
-iptables -A INPUT -p tcp --dport 22 -m recent ! --rcheck --seconds 60 --hitcount 4 --name ssh --rsource -j ACCEPT
-```
+  - Replace default ssh rule with this one.
+    - **The first rule** records the IP address of each attempt to access port 22 using the recent module.
+    - **The second rule** checks to see if that IP address has attempted to connect 4 or more times within the last 60 seconds, and if not then the packet is accepted.
+      - **Note** 
+      - This rule would require a default policy of DROP on the input chain.
+
+    ```
+    ## 1st Rule
+    iptables -A INPUT -p tcp --dport 22 -m recent --set --name ssh --rsource
+    
+    ##  2nd Rule
+    iptables -A INPUT -p tcp --dport 22 -m recent ! --rcheck --seconds 60 --hitcount 4 --name ssh --rsource -j ACCEPT
+    ```
 
 * Command switches
 
-
-```
-        -A      	Append
-        -I          Inserts rule to position in chain
-        -m          Connection State
-        -j          jump to target: Accept, Drop, Log
-        --dport     destination port
-        -s          source ip
-        -p protocol
-```
+        -A         # Append
+        -I         # Inserts rule to position in chain
+        -m         # Connection State
+        -j         # Jump to target: Accept, Drop, Log
+        --dport    # Destination port
+        -s         # Source ip
+        -p         # Protocol
 
 * Save config
 
-```
-/etc/init.d/iptables save
-```
+        /etc/init.d/iptables save
 
-* Restart Iptables
+* Restart iptables
 
-```
-sudo /sbin/service iptables restart
-```
+        sudo /sbin/service iptables restart
+
+* Reference: 
+  - [DO - iptables](https://www.digitalocean.com/community/tutorials/iptables-essentials-common-firewall-rules-and-commands)
 
 ## firewalld
 ---
 
-AAA
+* Check status:
+
+        systemctl status firewalld
+
+* Check all zones:
+
+        firewall-cmd --list-all-zones
+
+* List all open ports:
+
+        firewall-cmd –-list-ports
+
+* Add a service to firewalld:
+
+        firewall-cmd --add-service=<service_name> --permanent
+
+* Add a port to firewalld:
+
+        firewall-cmd --add-port=<port_no>/<protocol>
+
+* Restart firewalld
+
+        systemctl restart firewalld
+
+* Reference:
+  - [TGD - firewalld](https://www.thegeekdiary.com/5-useful-examples-of-firewall-cmd-command/)
 
 ## SELINUX
 ---
 
+* Get status of SE Linux
+
+        sestatus
+        getenforce
+
+* Enable / Disable (Until reboot)
+
+        sentenforce 0 / 1
+
+        # 0 - Disable
+        # 1 - Enable
+
+* Check an entry in SE Linux
+
+        getent passwd <user_name>
+
 * Disable SE Linux
 
-```
-cat /etc/selinux/config
-```
+        # Configuration File
+        vim /etc/selinux/config
 
+        # Sample Entry
+        SELINUX=disabled
+        SELINUXTYPE=targeted
 
-```
-SELINUX=disabled
-SELINUXTYPE=targeted
-```
+* Reference:
+  - [TB - SE Linux](https://tojaj.com/selinux-cheat-sheet/)
 
 ## YUM
 ---
@@ -2349,11 +2257,132 @@ yum groupinstall "Development Tools"
 yum list installed
 ```
 
-* Show available updates
+
+## Python
+---
+
+* update pip (Python package manager):
 
 ```
-yum list updates
+        pip install -U pip
 ```
+* search pip repos
+
+```
+        pip
+```
+* create a virtual python environment
+
+```
+        virtualenv [dirname] --no-site-packages
+```
+* connect to a virtual python environment
+
+```
+        source [dirname]/bin/activate
+```
+* disconnect from a python environment:
+
+```
+        deactivate
+```
+* install package into virtual python environment from outsie:
+
+```
+        pip install [packagename]==[version_number] -E [dirname]
+```
+* export python virtual environment into a shareable format:
+
+```
+        pip freeze -E [dirname] > requirements.txt
+```
+* import python virtual environment from a requirements.txt file:
+
+```
+        pip install -E [dirname] -r requirements.txt
+```
+* Share all files in current folder over port 8080
+
+```
+        python -m SimpleHTTPServer 8080
+```
+
+## Sshuttle
+---
+
+* Tunnel traffic to any server you have ssh access to including dns
+
+```
+        sshuttle -r <server> --dns 0/0
+```
+
+## Mitmproxy
+---
+ Allows you to inspect https traffic
+
+* Automatically strip all cache control headers and make sure you always get fresh connection
+
+```
+        mitmproxy --anticache
+```
+
+* Record a session
+
+```
+        mitmdump -w user-signup
+```
+* Replay a sessio
+
+```
+        mitmdump -c user-signup | tail -n1 | grep 200 && echo "OK" || echo "FAIL"
+```
+* Disable ping to avoid ICMP flood
+
+```
+        Set following in /etc/sysctl.conf : net.ipv4.icmp_echo_ignore_all = 1
+        Then “sysctl -p”
+```
+
+* Show Public IP Address
+
+```
+        ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//'
+```
+* Show SYN Flood
+
+```
+        ss -a | grep SYN-RECV | awk '{print $4}' | awk -F":" '{print $1}' | sort | uniq -c | sort -n
+        or
+        netstat -antp | grep SYN_RECV|awk '{print $4}'|sort|uniq -c | sort -n
+```
+
+## Screen
+---
+* Config File
+
+        ~/.screenrc
+
+* Commands
+
+        screen -ls    # show all screens
+        CTRL a w      # which screens are available
+        CTRL a 0      # go to window 0
+        CTRL a 1      # go to window 1
+        CTRl a D      # detach from current session
+        CTRL a c      # create a new screen
+        CTRL a n      # go to next screen
+        CTRL a A      # rename session name
+        CTRL a S      # split screen horizontal
+        CTRL a TAB    # move to next split screen
+        CTRL a |      # split screen vertical
+        CTRL A X      # close current split screen
+        CTRL A -      # switches to last window
+        Exit          # kill current session
+        screen -r     # reattach to screen
+
+
+
+
 
 ## Cron
 ---
