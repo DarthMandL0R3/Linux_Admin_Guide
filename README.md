@@ -1777,63 +1777,63 @@ Key | Explanation
 
 * Generate a file
 
-    MYHOME=/home/colin
+        MYHOME=/home/colin
 
-    cat > testhome.sh << _EOF
-    # All of this goes into the file testhome.sh
-    if [ -d "$MYHOME" ] ; then
-        echo $MYHOME exists
-    else
-        echo $MYHOME does not exist
-    fi
-    EOF
-    
-    bash testhome.sh
+        cat > testhome.sh << _EOF
+        # All of this goes into the file testhome.sh
+        if [ -d "$MYHOME" ] ; then
+                echo $MYHOME exists
+        else
+                echo $MYHOME does not exist
+        fi
+        EOF
+        
+        bash testhome.sh
 
 * Assigning output of one command to variable
 
-    #!/bin/bash
-    for node in $(cat nodes.txt)
-    do
-        node_name=$(echo $node | tr -d '"');
-        echo $node_name
-    done
+        #!/bin/bash
+        for node in $(cat nodes.txt)
+        do
+                node_name=$(echo $node | tr -d '"');
+                echo $node_name
+        done
 
 * Iterating a JSON file
 
-for r in $(cat repos.json | jq '.[]')
-do
-    repo_name=$(echo $r | tr -d '"');
-    echo $repo_name;
-done
+        for r in $(cat repos.json | jq '.[]')
+        do
+        repo_name=$(echo $r | tr -d '"');
+        echo $repo_name;
+        done
 
 * Checking for existence of arguments
 
-    if [ $# -eq 0 ]; then
-        echo "Please enter an argument"
-        exit 1
-    fi
+        if [ $# -eq 0 ]; then
+                echo "Please enter an argument"
+                exit 1
+        fi
 
 * Check for environment variable
 
-    if [ -z "${GITHUB_TOKEN}" ]; then
-        echo "Missing GITHUB_TOKEN environment variable"
-        exit 1
-    fi
+        if [ -z "${GITHUB_TOKEN}" ]; then
+                echo "Missing GITHUB_TOKEN environment variable"
+                exit 1
+        fi
 
 * Checking the output of last command and prompt to continue
 
-     if [[ $? -ne 0 ]]; then
-        echo "command failed"
-        read ABCD
-     fi
+        if [[ $? -ne 0 ]]; then
+                echo "command failed"
+                read ABCD
+        fi
 
 * Iterate over a list
 
-    namespaces=(ns1 ns2 ns3)
-    for n in ${namespaces[@]}; do
-        echo "*** $n ***" ;
-    done
+        namespaces=(ns1 ns2 ns3)
+        for n in ${namespaces[@]}; do
+                echo "*** $n ***" ;
+        done
 
 * !^
  
