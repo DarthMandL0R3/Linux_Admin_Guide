@@ -1202,21 +1202,21 @@ ln -s /path/to/original /path/to/symlink
 
 Key | What to look for?
 --- | ---
-io wait | Represents CPU waiting for disk I/O. Check for server slowness. If it is low then you can rule out disk access. GT > 10% is high means disk is slow.
-CPU idle time | Higher the number the more bandwidth available to server. Should be >25%
-CPU user time | Time spent on processor running your program. If idle time is low, you can expect this to be high. Find process taking up CPU.
-CPU system time | The time spent in operating system kernel.
-CPU steal time | Virtual machines are competing for resources. If %st increases on all VM's, means your VM is using too much cpu. elif %st increases on just one VM = Physical is oversold.
-Memory Usage | Don't look at the "free" memory -- it's misleading. To get the actual memory available, subtract the "cached" memory from the "used" memory. This is because Linux caches things liberally, and often the memory can be freed up when it's needed
-Memory Usage* | True memory usage = Memory used - Swap cached
-Load | How many processes are waiting to run?
+**CPU io wait** | Represents CPU waiting for disk I/O. Check for server slowness. If it is low then you can rule out disk access. GT > 10% is high means disk is slow.
+**CPU idle time** | Higher the number the more bandwidth available to server. Should be >25%
+**CPU user time** | Time spent on processor running your program. If idle time is low, you can expect this to be high. Find process taking up CPU.
+**CPU system time** | The time spent in operating system kernel.
+**CPU steal time** | Virtual machines are competing for resources. If %st increases on all VM's, means your VM is using too much CPU. Else %st increases on just one VM = physical CPU is oversold.
+**Memory Usage** | Don't look at the "free" memory -- it's misleading. To get the actual memory available, subtract the "cached" memory from the "used" memory. This is because Linux caches things liberally, and often the memory can be freed up when it's needed
+Memory Usage * | True memory usage = Memory used - Swap cached
+**Load** | How many processes are waiting to run?
 Load * | < 0.7 = healthy (on single core machine)
 Load * | 1.0 = system is fully used (on single core machine)
 Load * | 1.0 on single core, 4.0 on quad core
 Load * | Broken down by one minute, 5 minutes, 15 minutes
 Load * | ```lscpu``` - Shows how many cores available
-Swap cached |  Caches files in the filesystem in memory for better performance. Uses spare memory
-Swap total vs Swap free | If they are equal there is no swapping going on
+**Swap cached** |  Caches files in the filesystem in memory for better performance. Uses spare memory.
+**Swap total vs Swap free** | If they are equal there is no swapping going on.
 <br>
 
 * Show open tcp sockets
@@ -1225,87 +1225,97 @@ Swap total vs Swap free | If they are equal there is no swapping going on
 
 Key | Usage
 --- | ---
--n | This option inhibits the conversion  of  network  numbers  to  host  names  for  network  files. Inhibiting  conversion may make lsof run faster.  It is also useful when host name lookup is not working properly.
--P | This option inhibits the conversion of port numbers to port names for network files.  Inhibiting the  conversion  may  make lsof run a little faster.  It is also useful when port name lookup is not working properly.
+-n | This option inhibits the conversion  of  network  numbers  to  host  names  for  network  files.
+-P | This option inhibits the conversion of port numbers to port names for network files.
 -i [tcp] | This  option  selects  the  listing  of  files any of whose Internet address matches the address specified in i.
+<br>
+
+  Reminder | Notes
+  --- | ---
+  1 | Inhibiting the  conversion  may  make lsof run a little faster.
+  2 | It is also useful when port name lookup is not working properly.
 <br>
 
 * Show bandwidth usage per connection
 
-```
         iftop
-```
 
 * Show Ports listening with thir process id
 
-```
         netstat -tlnp (show ports listening with their process id)
 
-        -l, --listening : Show only listening sockets.  (These are omitted by default.)
-        -n, --numeric : Show numerical addresses instead of trying to determine symbolic host, port or user names.
-        -p, --program : Show the PID and name of the program to which each socket belongs.
-        -t, --tcp : Show only tcp
-```
+Key | Explanation
+--- | ---
+-l, --listening | Show only listening sockets.  (These are omitted by default.)
+-n, --numeric | Show numerical addresses instead of trying to determine symbolic host, port or user names.
+-p, --program | Show the PID and name of the program to which each socket belongs.
+-t, --tcp | Show only tcp
+<br>
 
-* Show Ports listening - Mac only
+* Show Ports listening - **Mac ONLY**
 
-```
         nettop
-```
 
 * Show bandwith ussage per process
 
-```
-
         nethogs
-```
 
 * Show running services
 
-```
-
-        ps –ax
+        # ps commands
         ps –eaf
-        pstree
         ps aux
+        ps –ax
+
+        ## ps options
+        --------------
         a = show processes for all users
         u = display the process's user/owner
         x = also show processes not attached to a terminal
-```
+        f = full format lsiting
 
-* Like top, but with a better, cleaner interface:
+        # pstree command
+        pstree
+        pstree -n
+        pstree -a
 
-```
+        ## pstree options
+        ------------------
+        a = include command argument
+        n = sort by PID
+
+  - Further references: [ps](https://www.journaldev.com/24613/linux-ps-command), [pstree](https://www.howtoforge.com/linux-pstree-command/)
+
+* Better top with cleaner interface:
+
         htop
-```
 
 * Stop a process from using all system resources and lagging computer:
 
-```
+
         nice [process name]
-        nice command is used for changing priority of the jobs.
-        Syntax: nice [OPTION] [COMMAND [ARG]…]
-        Range of priority goes from -20 (highest priority) to 19 (lowest).Priority is given to a job so that the most important job is executed first by the kernel and then the other least important job
-```
+
+  - nice command is used for changing priority of the jobs.
+  - Syntax: ```nice [OPTION] [COMMAND [ARG]…]```
+  - Range of priority goes from **-20 (highest priority) to 19 (lowest)**.
+  - Priority is given to a job so that the most important job is executed first by the kernel and then the other least important job
 
 * Show all ruby-related PIDs and processes
 
-```
-
         pgrep -fl ruby
-```
 
 * Whats a process doing?
 
-```
         strace -f -p $PID
-```
 
-* Keep running the same command over and over
+* Show every call a program is making
 
-```
+        strace python myprogram.py # Dont run on Production DB
+        opensnoop -p pid           # Same as strace but faster
+
+* Monitor process actively using the terminal
+
         watch 'ps aux | grep ruby'
-```
 
 * How much memory is left
 
@@ -1336,54 +1346,37 @@ Key | Usage
 
 * How much io disk or network is getting or sending
 
-```
         dstat
-```
-
-* Show every call a program is making
-
-```
-        strace python myprogram.py #dont run on production db
-        opensnoop -p pid  #same as strace but won't slow u down
-```
 
 * Show current directory disk size
 
-```
         du -hs
-```
 
 * What is using the IO? Is MySQL sucking up the resources? Is it your PHP processes?
 
-```
         dstat --top-io --top-bio
-```
 
 * top 10 memory hogs
 
-```
-        ps aux --sort=-resident|head -11
-```
+        ps aux --sort=-resident | head -11
 
-* Tracroute but Avoid tcp blockage
+* Traceroute but avoid TCP blockage
 
-```
         tcptraceroute google.com
-```
 
-* is the host oversold
+* Is the host oversold?
 
-```
-        top, look for %st. Stealtime = virtual machines are competing for resources.
-         If %st increases on all VM's, means your VM is using too much cpu.
-         elif %st increases on just one VM = Physical is oversold
-```
+        1. Run top, look for %st. 
+        2. %st = Stealtime = Virtual machines are competing for this resources.
+        3. If %st increases on all VM's means your VM is using too much CPU.
+        4. Else %st increases on just one VM = Physical is oversold
 
-* Disk performance
+  - Further references: [CPU Steal Time](https://scoutapm.com/blog/understanding-cpu-steal-time-when-should-you-be-worried)
 
-```
-        A sustained increase of VolumeQueueLength way above 1 on a standard EBS volume should be treated as exhausting the throughput of that EBS volume. We recommend that you target a queue length between 4 and 8 for volumes with 2,000 to 4,000 provisioned IOPS, or a queue length of 1 for every 500 IOPS provisioned for volumes with fewer than 2,000 provisioned IOPS
-```
+* Amazon EBS Disk performance
+
+    - A **sustained increase of VolumeQueueLength way above 1 on a standard EBS volume should be treated as exhausting** the throughput of that EBS volume. 
+    - We recommend that you target a **queue length between 4 and 8 for volumes with 2,000 to 4,000 provisioned IOPS, or a queue length of 1 for every 500 IOPS provisioned for volumes with fewer than 2,000 provisioned IOPS**.
 
 * Bandwidth available between two computers
 
@@ -1405,135 +1398,19 @@ Key | Usage
 * Restart Service
 
         /etc/init.d/<servicename>
+        systemctl restart <servicename>
+        service <servicename> restart
 
-        Service <servicename> restart
+* Reload Service Configuration of a Process
 
-* Reload Service configuration
+        kill -HUP <PID_Number>
 
-        kill -HUP 128
-        This causes the program to restart and examine its configuration files.
+    - This causes the program to restart and examine its configuration files.
 
 ## Command Line
 ---
 
-* Xargs: Get input from a pipe and run a command for each argument. takes strings separated by whitespace and passes them into the command specficied
-
-        ls |xargs -n 2 echo   #-n2 means how many arguments to supply at a given time
-
-* Awk
-
-https://www.howtogeek.com/562941/how-to-use-the-awk-command-on-linux/
-
-    find positional parameters
-
-            ls -la | awk '{ print $ 5}’
-
-* Awk (continued)
-
-```
-    awk '{ print $2, $1 }' file                  # Print and inverse first two columns
-    awk '{printf("%5d : %s\n", NR,$0)}' file     # Add line number left aligned
-    awk '{print FNR "\t" $0}' files              # Add line number right aligned
-    awk NF test.txt                              # remove blank lines (same as grep '.')
-    awk 'length > 80'                            # print line longer than 80 char)
-    $0											Represents the entire line of text.
-    $1											Represents the first field.
-    $NF											Stands for “number of fields,” and represents the last field.
-```
-
-* Awk (output field seperators)
-
-put a / after each output
-
-```
-    date | awk 'OFS="/" {print$2,$3,$6}'  
-```
-
-* Awk (begin and ends) 
-
-put a line before everything runs
-```
-awk 'BEGIN {print "Dennis Ritchie"} {print $0}' dennis_ritchie.txt
-```
-
-* Awk (input field seperators)
-
-If you want awk to work with text that doesn’t use whitespace to separate fields, you have to tell it which character the text uses as the field separator. For example, the /etc/passwd file uses a colon (:) to separate fields.
-
-```
-awk -F: '{print $1,$6}' /etc/passwd
-```
-
-* Awk (patterns)
-
-If all we’re interested in are regular user accounts, we can include a pattern with our print action to filter out all other entries. Because User ID numbers are equal to, or greater than, 1,000, we can base our filter on that information.
-
-```
-awk -F: '$3 >= 1000 {print $1,$6}' /etc/passwd
-```
-
-* cut
-
-Get the second field delimited by a dot
-```
-cut -f2 -d "."
-```
-
-* Sed
-
-```
-    sed 's/string1/string2/g'                    # Replace string1 with string2
-    sed -i 's/wroong/wrong/g' *.txt              # Replace a recurring word with g
-    sed 's/\(.*\)1/\12/g'                        # Modify anystring1 to anystring2
-    sed '/<p>/,/<\/p>/d' t.xhtml                 # Delete lines that start with <p>
-                                                # and end with </p>
-    sed '/ *#/d; /^ *$/d'                        # Remove comments and blank lines
-    sed 's/[ \t]*$//'                            # Remove trailing spaces (use tab as \t)
-    sed 's/^[ \t]*//;s/[ \t]*$//'                # Remove leading and trailing spaces
-    sed 's/[^*]/[&]/'                            # Enclose first char with [] top->[t]op
-    sed = file | sed 'N;s/\n/\t/' > file.num     # Number lines on a file
-    Regular Expressions
-```
-    http://www.grymoire.com/Unix/Sed.html
-
-* Tail, Sort, Head
-
-        ps -aux | tail -n +2 | sort -rnk 4
-        tail = starting from 2 lines below otp
-        sort = - reverse , numeric sort, by column 4
-        head = output the first 10 lines
-        uniq = with -c counts how many times a string shows up in a document uniquely
-
-* run jobs in parallel easily:
-
-        ls *.png | parallel -j4 convert {} {.}.jpg
-
-
-* Open an editor to work with long or complex command lines
-
-        ctrl-x ctrl-e
-
-* Wait until [command 1] is finished to execute [command 2]
-
-
-        [command 1] ; [command 2]
-
-* To leave stuff in background even if you logout
-
-         nohup ./long_script &
-
-* Change to the previous directory you were working on
-
-        cd -
-
-* Starts a command at the specified time
-
-        echo start_backup.sh | at midnight
-
-* Remembers your most used folders
-
-        'j.py' http://tiny.cc/62qjow  an incredible substitute to browse directories by name instead of 'cd'
-        - learn to use 'pushd' to save time navigating folders (j.py is better though)
+* Usual commands to use in CLI
 
   - `tee`: allows you to pipe output to a file and stdout at the same time
   - `awk`: finds patterns in files. most useful for filtering fields seperated by white space
@@ -1546,8 +1423,118 @@ cut -f2 -d "."
   - `head`: shows the beginning of a file(s)
   - `tail`: shows the end of a file(s)
 
+* xargs 
+  - Get input from a pipe and run a command for each argument
+  - Takes strings separated by whitespace and passes them into the command specficied
+
+        ls | xargs -n 2 echo   
+        #-n 2 means how many arguments to supply at a given time
+
+* awk
+
+  - Further reference: [HTG - awk Reference](https://www.howtogeek.com/562941/how-to-use-the-awk-command-on-linux/)
+
+
+- awk -> Find positional parameters
+
+        ls -la | awk '{ print $ 5}’
+
+* awk -> Begin and ends 
+
+  - put a line before everything runs
+
+        awk 'BEGIN {print "Dennis Ritchie"} {print $0}' dennis_ritchie.txt
+
+* awk -> Output field seperators
+
+  - put a / after each output
+
+        date | awk 'OFS="/" {print$2,$3,$6}'  
+
+* awk -> Input field seperators
+
+  - If you want awk to work with text that doesn’t use whitespace to separate fields, you have to tell it which character the text uses as the field separator.
+  - For example, the ```/etc/passwd``` file uses a colon (:) to separate fields.
+
+        awk -F : '{print $1,$6}' /etc/passwd
+
+
+* awk -> Patterns
+
+  - If all we’re interested in are regular user accounts, we can include a pattern with our print action to filter out all other entries.
+  - Because User ID numbers are equal to, or greater than, 1,000, we can base our filter on that information.
+
+        awk -F: '$3 >= 1000 {print $1,$6}' /etc/passwd
+
+
+* awk -> Others
+
+    awk command | What it does?
+    --- | ---
+    ```awk '{ print $2, $1 }' file``` | Print and inverse first two columns
+    ```awk '{printf("%5d : %s\n", NR,$0)}' file``` | Add line number left aligned
+    ```awk '{print FNR "\t" $0}' files``` | Add line number right aligned
+    ```awk NF test.txt``` | emove blank lines (same as grep '.')
+    ```awk 'length > 80'``` | Print line longer than 80 char)
+    ```$0``` | Represents the entire line of text.
+    ```$1``` | Represents the first field.
+    ```$NF``` | Stands for “number of fields,” and represents the last field.
+
+
+* cut
+
+  - Get the second field delimited by a dot
+
+        cut -d "." -f 2 
+
+  - Further reference: [cut](https://linuxize.com/post/linux-cut-command/)
+
+* Sed
+
+    sed | commands
+    --- | ---
+    ```sed 's/string1/string2/g'``` | Replace string1 with string2
+    ```sed -i 's/wroong/wrong/g' *.txt``` | Replace a recurring word with g
+    ```sed 's/\(.*\)1/\12/g'``` | Modify anystring1 to anystring2
+    ```sed '/<p>/,/<\/p>/d' t.xhtml``` | Delete lines that start with <p> and end with </p>
+    ```sed '/ *#/d; /^ *$/d'``` | Remove comments and blank lines
+    ```sed 's/[ \t]*$//'``` | Remove trailing spaces (use tab as \t)
+    ```sed 's/^[ \t]*//;s/[ \t]*$//'``` | Remove leading and trailing spaces
+    ```sed 's/[^*]/[&]/'``` | Enclose first char with [] top->[t]op
+    ```sed = file \| sed 'N;s/\n/\t/' > file.num```  | Number lines on a file
+    <br>
+
+  - Further reference: [sed for CLI](http://www.grymoire.com/Unix/Sed.html)
+
+* Tail, Sort, Head
+
+        ps -aux | tail -n +2 | sort -rnk 4
+
+  - tail = starting from 2 lines below otp
+  - sort = - reverse , numeric sort, by column 4
+  - head = output the first 10 lines
+  - uniq = with -c counts how many times a string shows up in a document uniquely
+
+* run jobs in parallel easily:
+
+        ls *.png | parallel -j4 convert {} {.}.jpg
+
+
+* Open an editor to work with long or complex command lines
+
+        ctrl-x ctrl-e
+
+* Wait until [command 1] is finished to execute [command 2]
+
+        [command 1] ; [command 2]
+
+* To leave stuff in background even if you logout
+
+         nohup ./long_script &
+
 * Explain the following command:
-  `(date ; ps -ef | awk '{print $1}' | sort | uniq | wc -l ) >> Activity.log`
+  
+        (date ; ps -ef | awk '{print $1}' | sort | uniq | wc -l ) >> Activity.log
 
   - Shows the date
   - show all processes by users including extra information such as userid
@@ -1563,265 +1550,224 @@ cut -f2 -d "."
         1> file redirects stdout to file
         2> file redirects stderr to file
         &> file redirects stdout and stderr to file
+
 * Write output to a file
 
-```
-cat <<EOF> ~/.kube/config
+        cat << EOF > ~/.kube/config
 
-apiVersion: v1
-clusters:
-EOF
-
-```
-
+        ## Output in terminal
+        apiVersion: v1
+        clusters:
+        EOF
 
 ## Bash
 ---
+  - Login vs Non-Login:
+     - Login: Login via SSH or via console without GUI.
+     - Non-Login: From desktop if you open `xterm` (except on Mac), Using `screen` command
+       - Test which one: `shopt login_shell`
 
-```
-Login vs Non-Login:
-     Login: When you login via SSH or via console without GUI. (Mac: Terminal, iTerm), Fabric
-     Non-Login: from desktop if you open xterm (except on mac), screen command
-     Test which one: shopt login_shell
+- The Process:
+  - Ubuntu:
+    - Login shell: Loads `.profile` > `source .bashrc`
+    - Non-login (already logged): Loads `.bashrc` only.
+    - If `.bash_profile` is present, it will be loaded first.
+    - If you want to load `.profile` you must source it in `bash_profile`.
 
+  - Mac:
+     Login: GUI, iTerm and Terminal are loaded as login. `.bash_profile is loaded` > source `.bashrc`.
 
-Ubuntu:
-     Login shell: Loads .profile > source .bashrc
-     Non-login(already logged): Loads .bashrc only
-     * if .bash_profile is present . it will be loaded first. If you want to load .profile you must source it in bash_profile
-
-
-Mac:
-     Login: Gui, iTerm and Terminal are loaded as login .
-               .bash_profile is loaded > source .bashrc
-
-.bashrc - is for bash configs
-.profile/.bash_profile : environmentmal variables
-```
+- Files needed:
+  - `.bashrc` - For bash configurations.
+  - `.profile / .bash_profile` : Environmentmal variables.
 
 * Configure defaul shell
 
-```
         defshell -bash
-```
 
-* Adding aliases
+* Adding aliases in your .bashrc
 
-in your .bashrc
-
-```
         alias dev='ssh fooey@dev.example.com -p 22000'
-```
 
-* Make bash history 10,0000
+* Make bash history size = 10,0000
 
-```
         export HISTSIZE=100000 SAVEHIST=100000 HISTFILE=~/.bash_history
-```
 
 * Configure command line completion using up and down arrows
+  - Create `~/.inputrc` and fill it with this:
 
-```
-        Create ~/.inputrc and fill it with this:
         "\e[A": history-search-backward
         "\e[B": history-search-forward
         set show-all-if-ambiguous on
         set completion-ignore-case on
-```
 
 * Colorize Bash Prompt
+  - Add to .bash_profile
 
-```
-        add to .bash_profile
         export PS1="[\[\e[32;1m\]\u@\h \[\e[33;1m\]\W\[\033[m\]]\[\e[37;1m\]\$ "
-```
 
-* to run a command from history use exclamation !
+* To run a command from history use exclamation !
 
-```
         !680
-```
 
 * Prompt for input in a bash script
 
-```
         read -p “Do you want to continue” variable
-```
 
 * Cut off the first column in a text file
 
-```
         cat filename | cut -d" " -f1
-```
-
-* Redirection of output
-
-```
-        &> for redirection, it redirects both the standard output and standard error
-```
 
 * Find what a command does
 
-```
+  - The whatis command displays a summary line from the man page for the specified command.
+
         whatis
-        The whatis command displays a summary line from the man page for the specified command.
-```
 
 * Navigation
 
-```
-        ctrl-w - delete the last word
-        ctrl-u - delete start of the line
-        ctrl-l - clear the screen
-        cd -  : go back to previous working dir
-        option-left/right - move word by word
-```
-
-* Loop through folders
-
-```
-for d in */ ; do
-    echo "$d"
-    cd $d
-    <<comand here>>
-    cd ..
-done
-```
-
+        Ctrl-w          # Delete the last word
+        Ctrl-u          # Delete start of the line
+        Ctrl-l          # Clear the screen
+        Ctrl-Left/Right # Move word by word
+        cd -            # Go back to previous working dir
+ 
 * Base64 Decode
 
-```
-    echo "word" | base64 -d
-```
-
-* set variable
-
-```
-    FOO="bar"
-```
-
-* unset variable
-
-```
-    unset FOO
-```
-
-* recalling your variable by prepending it with a dollar sign ($).
-
-```
-    echo $FOO
-```
-
-* preserves any special characters that might appear in the variable;
-
-```
-    echo "${FOO}"
-```
-
-* Prepending
-
-    When you create a variable, the variable is known to your current shell and only your current shell
-    You can prepend any number of variables before running a command. Whether the variables are used by the child process is up to the process, but you can pass the variables to it no matter what:
-
-    $ FOO=123 bash
-    $ echo $FOO
-    123
-
-
-* Exporting variables
-
-    Another way to make variables available to a child process is the export keyword, a command built into Bash. The export command broadens the scope of whatever variable or variables you specify:
-
+        echo "word" | base64 -d
 
 * Bash loop
 
-```
-    for f in * ;
-        do file $f ;
-    done
-```
+  - One way to do it:
 
-    or 1 liner
+        for f in * ;
+          do file $f ;
+        done
 
-```
-    for f in * ; do convert $f -scale 33% tmp/$f ; done
-```
+  - Another way is using a one-liner:
+
+        for f in *; do convert $f -scale 33% tmp/$f; done
+
+  - Loop through folders
+
+        for d in */ ; do
+          echo "$d"
+          cd $d
+          <<comand here>>
+          cd ..
+        done
 
 * Zshell
 
-    .zprofile is equivalent to .bash_profile and runs at login, including over SSH
-    .zshrc is equivalent to .bashrc and runs for each new Terminal session
+  - `.zprofile` is equivalent to `.bash_profile` and runs at login, including over SSH.
+  - .`zshrc` is equivalent to `.bashrc` and runs for each new Terminal session.
+  - Further reference: [zshell](https://www.sitepoint.com/zsh-commands-plugins-aliases-tools/)
 
 * Redirects
 
-```
-    # cmd 1> file                         # Redirect stdout to file.
-    # cmd 2> file                         # Redirect stderr to file.
-    # cmd 1>> file                        # Redirect and append stdout to file.
-    # cmd &> file                         # Redirect both stdout and stderr to file.
-    # cmd >file 2>&1                      # Redirects stderr to stdout and then to file.
-    # cmd1 | cmd2                         # pipe stdout to cmd2
-    # cmd1 2>&1 | cmd2                    # pipe stdout and stderr to cmd2
-```
+    Commands | Explanation
+    --- | ---
+    cmd 1> file  | Redirect stdout to file.
+    cmd 2> file  | Redirect stderr to file.
+    cmd 1>> file | Redirect and append stdout to file.
+    cmd &> file  | Redirect both stdout and stderr to file.
+    cmd >file 2>&1 | Redirects stderr to stdout and then to file.
+    cmd1 \| cmd2    | Pipe stdout of cmd1 to cmd2
+    cmd1 2>&1 | cmd2 | Pipe stdout and stderr to cmd2
+<br>
 
 * Variables
 
-```
-    MESSAGE="Hello World"                        # Assign a string
-    PI=3.1415                                    # Assign a decimal number
-```
+    MESSAGE="Hello World"   # Assign a string
+    PI=3.1415               # Assign a decimal number
 
-* Arguments
+* Set variable
 
-```
-    $0, $1, $2, ...                              # $0 is the command itself
-    $#                                           # The number of arguments
-    $*                                           # All arguments (also $@)
-```
+        FOO="bar"
+
+* Unset variable
+
+        unset FOO
+
+* Recalling your variable by prepending it with a dollar sign ($)
+
+        echo $FOO
+
+* Preserves any special characters that might appear in the variable
+
+        echo "${FOO}"
+
+* Prepending
+
+  - When you create a variable, the variable is known to your current shell and only your current shell.
+  - You can prepend any number of variables before running a command. 
+  - Whether the variables are used by the child process is up to the process, but you can pass the variables to it no matter what:
+
+        $ FOO = 123 bash
+        $ echo $FOO
+          123
+
+* Exporting variables
+
+  - Another way to make variables available to a child process is the `export` keyword, a command built into Bash. 
+  - The `export` command broadens the scope of whatever variable or variables you specify:
+
+        $ MYVAR=1729
+        $ export MYVAR=1729
 
 * Special Variables
 
-```
-        $$                                           # The current process ID
-        $?                                           # exit status of last command
+        Examples:
+
+        1)
+        $$         # The current process ID
+        $?         # Exit status of last command
+        
         command
         if [ $? != 0 ]; then
             echo "command failed"
         fi
+
+        2)
         mypath=`pwd`
         mypath=${mypath}/file.txt
-        echo ${mypath##*/}                           # Display the filename only
-        echo ${mypath%%.*}                           # Full path without extention
+        
+        echo ${mypath##*/}  # Display the filename
+        echo ${mypath%%.*}  # Full path without ext
+        
+        3)
         foo=/tmp/my.dir/filename.tar.gz
-        path = ${foo%/*}                             # Full path without extention
-        var2=${var:=string}                          # Use var if set, otherwise use string
-                                                    # assign string to var and then to var2.
-        size=$(stat -c%s "$file")                    # get file size in bourne script
+
+        path = ${foo%/*}     # Full path without ext
+        
+        4)
+        Use var if set, otherwise use string
+        
+        var2=${var:=string}  # assign string to var and then to var2.
+        
+        5)
+        size=$(stat -c%s "$file")  # get file size in bourne script
         filesize=${size:=-1}
-```
 
 * Constructs
 
-```
-    for file in `ls`
-    do
-        echo $file
-    done
+        for file in `ls`
+        do
+                echo $file
+        done
 
-    count=0
-    while [ $count -lt 5 ]; do
-        echo $count
-        sleep 1
-        count=$(($count + 1))
-    done
+        count=0
+        while [ $count -lt 5 ]; do
+                echo $count
+                sleep 1
+                count=$(($count + 1))
+        done
 
     myfunction() {
         # $1 is first argument of the function
         find . -type f -name "*.$1" -print      
     }
     myfunction "txt"
-
-```
 
 * Generate a file
 
@@ -2176,29 +2122,25 @@ cat > generate-conf.sh (ctrl+d = paste)
 ---
 * Config File
 
-```
         ~/.screenrc
-```
 
 * Commands
 
-```
-screen -ls #show all screens
-CTRL a w # which screens are available
-CTRL a 0 # go to window 0
-CTRL a 1 # go to window 1
-CTRl a D # detach from current session
-CTRL a c # create a new screen
-CTRL a n # go to next screen
-CTRL a A # rename session name
-CTRL a S # split screen horizontal
-CTRL a TAB # move to next split screen
-CTRL a | # split screen vertical
-CTRL A X # close current split screen
-CTRL+a - switches to last window
-Exit # kill current session
-screen -r #reattach to screen
-```
+        screen -ls    # show all screens
+        CTRL a w      # which screens are available
+        CTRL a 0      # go to window 0
+        CTRL a 1      # go to window 1
+        CTRl a D      # detach from current session
+        CTRL a c      # create a new screen
+        CTRL a n      # go to next screen
+        CTRL a A      # rename session name
+        CTRL a S      # split screen horizontal
+        CTRL a TAB    # move to next split screen
+        CTRL a |      # split screen vertical
+        CTRL A X      # close current split screen
+        CTRL A -      # switches to last window
+        Exit          # kill current session
+        screen -r     # reattach to screen
 
 ## Python
 ---
