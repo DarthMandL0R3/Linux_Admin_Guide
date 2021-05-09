@@ -1743,19 +1743,22 @@ Key | Explanation
         4)
         Use var if set, otherwise use string
         
-        var2=${var:=string}  # assign string to var and then to var2.
+        var2=${var:=string}  # Assign string to var and then to var2.
         
         5)
-        size=$(stat -c%s "$file")  # get file size in bourne script
-        filesize=${size:=-1}
+        size=$(stat -c%s "$file")
+
+        filesize=${size:=-1}  # Get file size in bourne script
 
 * Constructs
 
+        ## Example 1
         for file in `ls`
         do
                 echo $file
         done
 
+        ## Example 2
         count=0
         while [ $count -lt 5 ]; do
                 echo $count
@@ -1763,16 +1766,19 @@ Key | Explanation
                 count=$(($count + 1))
         done
 
-    myfunction() {
+        ## Example 3
+        myfunction() 
+        {
         # $1 is first argument of the function
-        find . -type f -name "*.$1" -print      
-    }
-    myfunction "txt"
+        find . -type f -name "*.$1" -print 
+        }
+        
+        myfunction "txt"    # Invoke the function
 
 * Generate a file
 
-```
     MYHOME=/home/colin
+
     cat > testhome.sh << _EOF
     # All of this goes into the file testhome.sh
     if [ -d "$MYHOME" ] ; then
@@ -1780,250 +1786,208 @@ Key | Explanation
     else
         echo $MYHOME does not exist
     fi
-    _EOF
-    sh testhome.sh
-```
+    EOF
+    
+    bash testhome.sh
+
 * Assigning output of one command to variable
 
-```
     #!/bin/bash
     for node in $(cat nodes.txt)
     do
         node_name=$(echo $node | tr -d '"');
         echo $node_name
     done
-```
 
-* Iterating a json file
+* Iterating a JSON file
 
-```
 for r in $(cat repos.json | jq '.[]')
 do
     repo_name=$(echo $r | tr -d '"');
     echo $repo_name;
 done
-```
 
 * Checking for existence of arguments
 
-```
     if [ $# -eq 0 ]; then
         echo "Please enter an argument"
         exit 1
     fi
-```
 
 * Check for environment variable
 
-```
     if [ -z "${GITHUB_TOKEN}" ]; then
         echo "Missing GITHUB_TOKEN environment variable"
         exit 1
     fi
-```
 
 * Checking the output of last command and prompt to continue
 
-```
      if [[ $? -ne 0 ]]; then
         echo "command failed"
         read ABCD
      fi
-```
 
 * Iterate over a list
 
-```
     namespaces=(ns1 ns2 ns3)
     for n in ${namespaces[@]}; do
         echo "*** $n ***" ;
     done
-```
-
 
 * !^
-
-```
-!^ maps to the first argument of your latest command.
-```
+ 
+        # Maps to the first argument of your latest command
+        !^
 
 * !$
 
-```
-!$ maps to the last argument of your latest command.
-```
+        # Maps to the last argument of your latest command.
+        !$
 
 * !!:2
 
-you could use the !! event designator to select the last command, and the 2 word designator to select the second argument.
+        # Use the `!!` event designator to select the last command, and the `2` word designator to select the second argument.
+        !!2
 
 * Brace expansion
 
-expanded into ~/test/pics , ~/test/sounds, ~/test/sprites
+  - Expanded into ~/test/pics , ~/test/sounds, ~/test/sprites
 
-```
-$ mkdir ~/test/{pics,sounds,sprites}
-```
+        $ mkdir ~/test/{pics,sounds,sprites}
 
-A brace expansion can also have a sequence pattern {x..y[..incr]} where x and y are either an integer or a single character, and incr is an optional increment value.
 
-```
-touch ~/test/sounds/noise-{1..5}.mp3
-```
+  - A brace expansion can also have a sequence pattern `{x..y[..incr]}` where `x` and `y` are either an integer or a single character, and incr is an optional increment value.
 
-```
-$ touch ~/test/pics/pic{1..10..2}.jpg
-$ ls ~/test/pics
-pic1.jpg pic3.jpg pic5.jpg pic7.jpg pic9.jpg
-```
+        touch ~/test/sounds/noise-{1..5}.mp3
+
+        $ touch ~/test/pics/pic{1..10..2}.jpg
+        $ ls ~/test/pics
+        pic1.jpg pic3.jpg pic5.jpg pic7.jpg pic9.jpg
 
 * Command Expansion
 
-Your shell can replace a command surrounded by $() with its output.
+  - Your shell can replace a command surrounded by $() with its output.
 
-```
-$ cat <<EOF > aboutme
-My name is $(whoami)
-and I live in $HOME
-EOF
-$ cat aboutme
-My name is br
-and I live in /home/br
-```
+        $ cat <<EOF > aboutme
+        My name is $(whoami)
+        and I live in $HOME
+        EOF
 
-for example rename all directories to uppercase
+        $ cat aboutme
+        My name is br
+        and I live in /home/br
 
-```
-$ for dir in */; do
-    mv "$dir" "$(echo "$dir" | tr '[:lower:]' '[:upper:]')"
-  done
-```
+  - For example rename all directories to uppercase
+
+        $ for dir in */; do mv "$dir" "$(echo "$dir" | tr '[:lower:]' '[:upper:]')"; done
 
 * Copy from clipboard into new file
 
-```
-cat > generate-conf.sh (ctrl+d = paste)
-```
+        cat > generate-conf.sh (Ctrl + d = Paste)
 
 ## Networking
 ---
 
 * Show Hostname
 
-```
         hostname -f
-```
 
 * Set hostname
 
-```
         hostname acme.dev.nul
-        or /etc/sysconfig/network
-```
+        /etc/sysconfig/network
+        hostnamectl set-hostname 
 
 * Change Time Zone
 
-```
-        ln -sf /usr/share/zoneinfo/Australia/Sydney /etc/localtime
-        export TZ=Australia/Sydney
-```
+        ln -sf /usr/share/zoneinfo/Asia/KualaLumpur /etc/localtime
+        export TZ=Asia/KualaLumpur
+
 
 * Show IP
 
-```
         hostname -I
         ip addr show
         sudo ethtool eth0 - show connection status
-```
 
 * Set IP
 
-```
         ifconfig eth0 192.168.0.10 netmask 255.255.255.0
         system-config-network
         /etc/sysconfig/network-scripts/
         ip address add 192.168.0.1 dev eth0
-```
 
 * Add Default Gateway
 
-```
         route add default gw xx.xx.xx.1
-```
 
 * Restart Nic
 
-```
         service network restart
         /etc/init.d/network restart
         ifup eth0
-```
 
 * Configure DNS
 
-```
         nano /etc/resolv.conf
-```
 
 * Configure DNS for specific suffix
 
-```
-         cat /etc/resolver/private
-         nameserver 192.168.99.100
-```
+        cat /etc/resolver/private
+        nameserver 192.168.99.100
 
 * Query DNS
 
-```
-        dig +short txt 20120113._domainkey.gmail.com @8.8.8.8 #query text records
-        dig -x host #reverse
-        dig +nocmd +noall +answer www.blah.com #shows TTL
-        dig +short txt u123455.wl0000.sendgrid.net #query spf txt records
-        dig +short mx company.com # query mx records
-```
+- Using `dig` command:
 
-* Wget
+  Command | Purpose
+  --- | ---
+  dig +short txt 20120113._domainkey.gmail.com @8.8.8.8  | Query text records
+  dig -x host | Rverse NS lookup
+  dig +nocmd +noall +answer www.blah.com | Shows TTL
+  dig +short txt u123455.wl0000.sendgrid.net | Query spf txt records
+  dig +short mx company.com | Query mx records
 
-```
-        * Download file setting target directory:
-        wget -P ~/dest/dir www.foo.com/myfile.png
-        * Download file but save as different name
-        wget -O taglist.zip http://www.vim.org/scripts/download_script.php
-```
+* wget
 
-* Curl
+  - Download file setting target directory:
+    - `wget -P ~/dest/dir www.foo.com/myfile.png`
+  - Download file but save as different name:
+    - `wget -O taglist.zip http://www.vim.org/scripts/download_script.php`
 
-```
-        curl -I www.server.com			# -I to show headers only, -i to show headers
-        curl -D- www.server.com |less  # shows detailed tcp stuff
+* curl
 
-```
+        # -I to show headers only, -i to show headers
+        curl -I www.server.com
 
-* Curl loop
+        # Shows detailed TCP explaination
+        curl -D- www.server.com | less
 
-```
-        while true; do curl --write-out " - HTTP Response: %{http_code} - Total time: %{time_total} \n" https://google.com; done #continous
-```
-* Siege
+        # -k for insecure, -s for silent
+        curl -kIs www.server.com  
 
-```
+* curl Loop (For recrsive checking)
+
+        for i in {1..10}; do curl --write-out " - HTTP Response: %{http_code} - Total time: %{time_total} \n" https://google.com; done
+
+* Siege (**DDoS Checking - DANGEROUS!**)
+
         * Benchmark  20 connections for 30 seconds.
         siege -c20 www.google.com -b -t30s
-```
 
 * Ngrep
 
-```
-        * Similar to wireshark
-        ngrep -q -W byline "^(GET|POST) .*" # -W byline  preserves linesbreaks, -q  #supresses output about 		non-matching packets
-        ngrep -q -W byline "search" host www.google.com and port 80
-```
+  - Similar to wireshark
+    - ngrep -q -W byline "^(GET|POST) .*" # 
+      - -W byline ->  Preserves linesbreaks
+      - -q -> supresses output about non-matching packets
 
-        * Show packets going to a website on network
+                ngrep -q -W byline 'host www.google.com' 'port 80'
 
-```
+  - Show packets going to a website on network
+
         ngrep -d mywebsite
-```
 
 ## Netcat
 ---
