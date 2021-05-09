@@ -1577,9 +1577,9 @@ Key | Explanation
   - Mac:
      Login: GUI, iTerm and Terminal are loaded as login. `.bash_profile is loaded` > source `.bashrc`.
 
-- Files needed:
-  - `.bashrc` - For bash configurations.
-  - `.profile / .bash_profile` : Environmentmal variables.
+  - Files needed:
+    - `.bashrc` - For bash configurations.
+    - `.profile / .bash_profile` : Environmentmal variables.
 
 * Configure defaul shell
 
