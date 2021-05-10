@@ -27,19 +27,25 @@ limitations under the License.
   - [## Table Of Contents](#-table-of-contents)
   - [## Boot](#-boot)
   - [## Process](#-process)
-  - [## User Admin](#-user-admin)
+  - [## User and Group Administration](#-user-and-group-administration)
   - [## Hardware](#-hardware)
   - [## File System](#-file-system)
   - [## File Operations](#-file-operations)
   - [## Performance](#-performance)
+  - [## Systemd](#-systemd)
+    - [systemctl](#systemctl)
+    - [journalctl](#journalctl)
+    - [Further Reference](#further-reference)
   - [## Command Line](#-command-line)
   - [## Bash](#-bash)
+  - [## Regex](#-regex)
   - [## Networking](#-networking)
   - [## Netcat](#-netcat)
   - [## iptables](#-iptables)
   - [## firewalld](#-firewalld)
-  - [## SELINUX](#-selinux)
+  - [## SE Linux](#-se-linux)
   - [## YUM](#-yum)
+  - [## GPG](#-gpg)
   - [## Python](#-python)
   - [## Sshuttle](#-sshuttle)
   - [## Mitmproxy](#-mitmproxy)
@@ -57,12 +63,9 @@ limitations under the License.
   - [## Nginx](#-nginx)
   - [## Rsyslog](#-rsyslog)
   - [## Tmux](#-tmux)
-  - [## VIM](#-vim)
-  - [## Systemd](#-systemd)
-  - [## Systemd (Generic)](#-systemd-generic)
+  - [## vim](#-vim)
   - [## SQL](#-sql)
-  - [## Regex](#-regex)
-  - [## GPG](#-gpg)
+  - [## Node Exporter Monitoring](#-node-exporter-monitoring)
 
 ## Boot
 ---
@@ -370,7 +373,7 @@ limitations under the License.
     ```
 
 
-## User Admin
+## User and Group Administration
 ---
 
 * Become system administrator:
@@ -1407,6 +1410,186 @@ Key | Explanation
 
     - This causes the program to restart and examine its configuration files.
 
+## Systemd
+---
+
+### systemctl
+
+ - Commands
+
+        systemctl                   # Lists all units
+        systemctl --failed          # List failed
+        systemctl status
+        systemctl status <unit>
+        
+        systemctl enable <unit>
+        systemctl disable <unit>
+        
+        systemctl enable --now <unit>  # Enable and start in one go
+        systemctl disable --now <unit> # Disable and stop in one go
+
+        systemctl start <unit>
+        systemctl stop <unit>
+
+        systemctl mask <unit>
+        systemctl unmask <unit>
+
+        systemctl restart <unit>
+        systemctl reload <unit>
+
+        systemctl reset-failed [<unit>]
+
+ - Find unit definitions
+
+        # Show configuration
+        systemctl show <unit>
+
+        # Show configuration path
+        systemctl show -p FragmentPath <unit>   
+
+- Change unit definitions with
+
+        systemctl edit <unit>
+        systemctl daemon-reload   # after directly modifying/adding config files
+
+   - Global definitions from `/lib/systemd/system` will then be overruled by a new file in `/etc/systemd/system`
+
+- Delete units
+
+        systemctl stop <service>
+        systemctl disable <service>
+        rm /etc/systemd/system/<servicename>
+        systemctl daemon-reload
+        systemctl reset-failed
+
+- Job Processing
+
+        systemctl list-jobs
+
+- Listing Processes / Containers
+
+  - To help identify cgroup/process relations run
+
+        ps xawf -eo pid,user,cgroup,args
+
+        OR
+
+        systemd-cgls
+
+- Performance
+
+  - Print startup time per service
+
+        systemd-analyze blame
+
+  - DNS
+
+        systemd-resolve --status
+    
+  - Config is in /etc/systemd/resolved.conf where might want to make changes like those
+
+        [Resolve]
+        DNS=8.8.8.8 8.8.4.4       # Set explicit nameservers
+        Cache=no                  # Disable caching responses
+
+- Other
+
+        hostnamectl
+        timedatectl
+        localctl
+        loginctl
+        systemd-detect-virt
+
+- Misc
+  - [Systemd DBUS API](www.freedesktop.org/wiki/Software/systemd/dbus/)
+
+
+### journalctl
+
+* First set timezone before logging using journalctl
+
+        timedatectl list-timezones
+        sudo timedatectl set-timezone zone
+        timedatectl status
+
+* Logs since current boot
+
+        journalctl -b
+
+* To enable persistent logging:
+
+        sudo nano /etc/systemd/journald.conf
+        . . .
+        [Journal]
+        Storage=persistent
+
+* Show Boots
+
+        journalctl --list-boots
+
+* Print latest journal
+  
+        journalctl -e    # Print last page of journal
+        journalctl -f    # Print last 10 entries and continues (like tail -f)
+
+* Logs since a certain duration
+
+        journalctl --since "2015-01-10" --until "2015-01-11 03:00"
+        journalctl --since 09:00 --until "1 hour ago"
+        journalctl --since yesterday
+
+* By Unit
+
+        journalctl -u nginx.service -u php-fpm.service --since today
+
+* By Process ID
+
+        journalctl _PID=8088
+
+* By User ID
+
+        journalctl _UID=33 --since today
+
+* Truncate output
+
+        journalctl --no-full
+        journalclt --no-pager
+
+* Output result to JSON
+
+        journalctl -b -u nginx -o json-pretty
+
+* See how much disk is being used
+
+        journalctl --disk-usage
+
+* Delete old logs
+
+        journalctl --rotate
+        journalctl --vacuum-size=1G
+        journalctl --vacuum-time=2weeks
+
+* Create a service
+
+        sudo nano /etc/systemd/system/my.service
+        sudo systemctl enable /etc/systemd/system/my.service
+        sudo systemctl start my.service
+
+* Edit Service Config
+
+        [Unit]
+        Description=My Service
+        Documentation=https://backplane.io/index
+        [Service]
+        TimeoutStartSec=0
+        ExecStart=/usr/local/bin/somecommand
+        [Install]
+        WantedBy=multi-user.target
+
+### Further Reference
+
+- [Linux.com - Systemd Basics](https://www.linux.com/training-tutorials/understanding-and-using-systemd/)
+
 ## Command Line
 ---
 
@@ -1886,6 +2069,30 @@ Key | Explanation
 
         cat > generate-conf.sh (Ctrl + d = Paste)
 
+## Regex
+---
+
+* The basics:
+
+Syntax | Explanation
+--- | ---
+`[\^$.\|?*+()` | Special characters any other will match themselves
+`\` | scapes special characters and treat as literal
+`*` | Repeat the previous item zero or more times
+`.` | Single character except line break characters
+`.*` | Match zero or more characters
+`^` | Match at the start of a line/string
+`$` | Match at the end of a line/string
+`.$` | Match a single character at the end of line/string
+`^ $` | Match line with a single space
+`^[A-Z]` | match any line beginning with any char from A to Z
+<br>
+
+ - The `^ (caret)` fixes your pattern to the beginning of the line. 
+   - For example the pattern ^1 matches any line starting with a 1.
+  - The `$ (dollar)` fixes your pattern to the end of the sentence. 
+    - For example, 9$ matches any line ending with a 9.
+
 ## Networking
 ---
 
@@ -2115,7 +2322,7 @@ Key | Explanation
 * Reference:
   - [TGD - firewalld](https://www.thegeekdiary.com/5-useful-examples-of-firewall-cmd-command/)
 
-## SELINUX
+## SE Linux
 ---
 
 * Get status of SE Linux
@@ -2257,6 +2464,36 @@ yum groupinstall "Development Tools"
 yum list installed
 ```
 
+## GPG
+---
+
+- Install
+
+        brew install gnupg
+
+- Generate key
+
+        gpg --gen-key
+
+- Export your public key on your second computer into an armored blob using the email address you chose when creating the key
+
+        gpg --export --armor -email > pubkey.asc
+
+- Import another users public key
+
+        gpg --import pubkey.asc
+
+- Show keys on keyring
+
+        gpg --list-keys
+
+- Encrypt a file using someone elses public key
+
+        gpg --encrypt --recipient "Cory Heath" myriad.pdf
+
+- Decrypt file 
+
+        gpg --decrypt myriad.pdf.gpg > myriad.pdf
 
 ## Python
 ---
@@ -2379,10 +2616,6 @@ yum list installed
         CTRL A -      # switches to last window
         Exit          # kill current session
         screen -r     # reattach to screen
-
-
-
-
 
 ## Cron
 ---
@@ -3725,7 +3958,7 @@ Check out more resources below to learn about other stuff jq can do!
         Ctrl-b-arrow = switch panes
         Ctrl-b-[-arrow = scroll
 
-## VIM
+## vim
 ---
 
     hl - move L/R
@@ -3754,138 +3987,6 @@ Check out more resources below to learn about other stuff jq can do!
     ?string       Search back for string
     n       Search for next instance of string
     N       Search for previous instance of string
-
-## Systemd
----
-
-```
-wget https://github.com/prometheus/node_exporter/releases/download/0.11.0/node_exporter-0.11.0.linux-amd64.tar.gz
-sudo mv node_exporter /usr/sbin/
-
-sudo adduser prometheus -s /sbin/nologin
-sudo nano /usr/lib/systemd/system/node_exporter.service
-
-
-[Unit]
-Description=Prometheus Node Exporter
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/usr/sbin/node_exporter -web.listen-address=:11402
-Restart=on-abort
-
-
-[Install]
-WantedBy=multi-user.target
-
-
-sudo systemctl enable node_exporter.service
-sudo systemctl start node_exporter.service
-
-```
-
-First set timezone before logging
-
-```
-timedatectl list-timezones
-sudo timedatectl set-timezone zone
-timedatectl status
-```
-
-Logs since current boot
-
-```
-journalctl -b
-```
-
-To enable persistent logging:
-
-```
-sudo nano /etc/systemd/journald.conf
-. . .
-[Journal]
-Storage=persistent
-```
-
-Show boots
-
-```
-journalctl --list-boots
-```
-
-Logs since jan
-
-```
-journalctl --since "2015-01-10" --until "2015-01-11 03:00"
-journalctl --since 09:00 --until "1 hour ago"
-journalctl --since yesterday
-```
-
-By unit
-
-```
-journalctl -u nginx.service -u php-fpm.service --since today
-```
-
-By Process ID
-
-```
-journalctl _PID=8088
-```
-
-By User ID
-
-```
-journalctl _UID=33 --since today
-```
-
-Truncate output
-
-```
-journalctl --no-full
-journalclt --no-pager
-```
-
-Output to JSON
-
-```
-journalctl -b -u nginx -o json-pretty
-```
-
-See how much disk is being used
-
-```
-journalctl --disk-usage
-```
-
-Delete old logs
-
-```
-sudo journalctl --vacuum-size=1G
-```
-
-## Systemd (Generic)
-----
-
-* Create a service
-
-        sudo nano /etc/systemd/system/my.service
-        sudo systemctl enable /etc/systemd/system/my.service
-        sudo systemctl start my.service
-
-* Edit Service Config
-
-```
-[Unit]
-Description=My Service
-Documentation=https://backplane.io/index
-[Service]
-TimeoutStartSec=0
-ExecStart=/usr/local/bin/somecommand
-[Install]
-WantedBy=multi-user.target
-```
 
 ## SQL
 ---
@@ -3993,53 +4094,45 @@ FROM purchase p
 JOIN discount d ON d.id=p.discount_id;
 ```
 
-## Regex
+## Node Exporter Monitoring
 ---
 
-* Basics
+* Download and install Node Exporter
 
-```
-[\^$.|?*+()                          # special characters any other will match themselves
-\                                    # escapes special characters and treat as literal
-*                                    # repeat the previous item zero or more times
-.                                    # single character except line break characters
-.*                                   # match zero or more characters
-^                                    # match at the start of a line/string
-$                                    # match at the end of a line/string
-.$                                   # match a single character at the end of line/string
-^ $                                  # match line with a single space
-^[A-Z]                               # match any line beginning with any char from A to Z
-* The ^ (caret) fixes your pattern to the beginning of the line. For example the pattern ^1 matches any line starting with a 1.
-* The $ (dollar) fixes your pattern to the end of the sentence. For example, 9$ matches any line ending with a 9.
-```
+        # wget https://github.com/prometheus/node_exporter/releases/download/v*/node_exporter-*.*-amd64.tar.gz
 
-## GPG
----
+        # tar xvfz node_exporter-*.*-amd64.tar.gz
 
-Install
+        # cd node_exporter-*.*-amd64
 
-`brew install gnupg`
+        # ./node_exporter
 
-Generate key
+* Add user prometheus
 
-`gpg --gen-key`
+        # sudo adduser prometheus -s /sbin/nologin
 
-Export your public key on your second computer into an armored blob using the email address you chose when creating the key
+* Configure the Node Exporter using to start with systemd
 
-`gpg --export --armor -email > pubkey.asc`
+        # sudo nano /usr/lib/systemd/system/node_exporter.service
 
-Import another users public key
+        - Add the values below:
 
-`gpg --import pubkey.asc`
+        [Unit]
+        Description=Prometheus Node Exporter
+        After=network.target
 
-Show keys on keyring
+        [Service]
+        Type=simple
+        ExecStart=/usr/sbin/node_exporter -web.listen-address=:11402
+        Restart=on-abort
 
-`gpg --list-keys`
+        [Install]
+        WantedBy=multi-user.target
 
-Encrypt a file using someone elses public key
+* Enable the service 
 
-`gpg --encrypt --recipient "Cory Heath" myriad.pdf`
+        sudo systemctl enable node_exporter.service
+        sudo systemctl start node_exporter.service
 
-Decrypt file 
-
-`gpg --decrypt myriad.pdf.gpg > myriad.pdf`
+* Reference:
+  - [Prometheus - Node Exporter](https://prometheus.io/docs/guides/node-exporter/)
