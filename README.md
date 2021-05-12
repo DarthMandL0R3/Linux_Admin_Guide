@@ -730,7 +730,6 @@ dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
    Number of links (soft/hard) | As advertised
    Extended attribute | Append only or no one can delete file including root user (immutability)
    Access Control List (ACLs) | Table that tells a computer operating system which access rights each user has to a particular system object
-
 <br>
 
 * Show inodes of files and folders
@@ -758,7 +757,6 @@ dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
   6 | vgs | Check again if the drive have been added
   7 | lvs | Show all logical volume in the server
   8 | lvextend -l +100%FREE -r <target_lv> | Extend 100% free capacity of /dev/sdx to the target logical volume. 
-
 <br>
 
 * Add a new Amazon EBS disk to server
@@ -769,7 +767,6 @@ dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
   2 | sudo mkfs -t ext4 /dev/xvdf OR sudo mkfs -it xfs /dev/xvdf | Makes file system on /dev/xvdf
   3 | sudo mkdir /mnt/my-data | Make a mount point
   4 | sudo mount /dev/xvdf /mnt/my-data | Mount device
-
 <br>
 
 * Show Physical Volumes
@@ -820,8 +817,9 @@ Type | Explanation | Required Disk (at least) | Benefits | Cons
 0 | Striped set without parity or Striping | 2 |  Easy to implement, All storage capacity is used | Not fault-tolerant
 1 | Mirrored set without parity or Mirroring | 2 | Excellent read/write speed, In case a drive fails data do not have to be rebuild | Do not always allow a hot swap, Storage capacity is only half of the total drive capacity
 0+1 | Hybrid - Arrays are created and they are each mirrored via an overall RAID 1 (data backup) array. | 4 | Increased speed, Backup safety | Complex technology
-5 | Consists of block-level striping with distributed parity | 3 | Backup safety, Increased speed, Fault-tolerant, No data lost | Complex technology, Drive failures have an effect on throughput
 1+0 | Mirrors two drives together and then creates a striped set with the pair. | 3 | Rebuild time is very fast | Half of the storage capacity goes to mirroring - Expensive Redundancy
+5 | Consists of block-level striping with distributed parity | 3 | Backup safety, Increased speed, Fault-tolerant, No data lost | Complex technology, Drive failures have an effect on throughput
+6 | Consists of block-level striping with double distributed parity | 4 | Very high fault tolerance, Great for archiving | Write data transactions are slow, Rebuilding RAID array takes longer time
 <br>
 
 * Creating RAID using mdadm 
@@ -835,6 +833,7 @@ Type | Explanation | Required Disk (at least) | Benefits | Cons
         0 - RAID 0
         1 - RAID 1
         5 - RAID 5
+        6 - RAID 6
         10 - RAID 10
 
   - Further reference: [RAID Creation](https://www.digitalocean.com/community/tutorials/how-to-create-raid-arrays-with-mdadm-on-ubuntu-16-04)
