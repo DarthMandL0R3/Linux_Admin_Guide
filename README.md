@@ -41,7 +41,8 @@ limitations under the License.
   - [## Regex](#-regex)
   - [## Networking](#-networking)
   - [Cabling Technology](#cabling-technology)
-    - [UTP & STP](#utp--stp)
+    - [Coaxial Cable](#coaxial-cable)
+    - [UTP & STP Cable](#utp--stp-cable)
   - [## Netcat](#-netcat)
   - [## iptables](#-iptables)
   - [## firewalld](#-firewalld)
@@ -2199,7 +2200,28 @@ Syntax | Explanation
 
 ## Cabling Technology
 
-### UTP & STP
+### Coaxial Cable
+
+![Cross Section of Coaxial Cable](attachments/csec-coaixal-cable.png)
+
+- Sheath
+  - This is the outer layer of the coaxial cable. It protects the cable from physical damage.
+
+- Braided shield
+  - This shield protects signals from external interference and noise. This shield is built from the same metal that is used to build the core.
+
+- Insulation
+  - Insulation protects the core. It also keeps the core separate from the braided shield. Since both the core and the braided shield use the same metal, without this layer, they will touch each other and create a short-circuit in the wire.
+
+- Conductor
+  - The conductor carries electromagnetic signals. Based on conductor a coaxial cable can be categorized into two types; single-core coaxial cable and multi-core coaxial cable.
+
+- Single-core vs Multi-core
+  - A single-core coaxial cable uses a single central metal (usually copper) conductor, while a multi-core coaxial cable uses multiple thin strands of metal wires.
+
+![Single Core vs multi Core](attachments/single-core-multi-core-coaxial-cable.png)
+
+### UTP & STP Cable
 
 - UTP vs STP
 
