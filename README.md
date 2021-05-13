@@ -40,6 +40,8 @@ limitations under the License.
   - [## Bash](#-bash)
   - [## Regex](#-regex)
   - [## Networking](#-networking)
+  - [Cabling Technology](#cabling-technology)
+    - [UTP & STP](#utp--stp)
   - [## Netcat](#-netcat)
   - [## iptables](#-iptables)
   - [## firewalld](#-firewalld)
@@ -2194,6 +2196,39 @@ Syntax | Explanation
   - Show packets going to a website on network
 
         ngrep -d mywebsite
+
+## Cabling Technology
+
+### UTP & STP
+
+- UTP vs STP
+
+NO | UTP | STP
+--- | --- | ---
+1 | UTP stands for Unshielded twisted pair. | STP stands for Shielded twisted pair.
+2 | In UTP grounding cable is not necessary. | While in STP grounding cable is required.
+3 | Data rate in UTP is slow compared to STP. | Data rate in STP is high.
+4 | The cost of UTP is less. | While STP is costlier than UTP.
+5 | In UTP much more maintenance are not needed. | While in STP much more maintenance are needed.
+6 | In UTP noise is high compared to STP. | While in STP noise is less.
+7 | In UTP the generation of crosstalk is also high compared to STP. | While in STP generation of crosstalk is also less.
+8 | In UTP, attenuation is high in comparison to STP. | While in STP attenuation is low.
+<br>
+
+- Category of cables
+
+Category/name of the cable | Maximum supported speed | Bandwidth/support signals rate | Ethernet standard | Description
+--- | --- | --- | --- | ---
+Cat 1 | 1Mbps | 1MHz | Not used for data | This cable contains only two pairs (4 wires). This cable was used in the telephone network for voice transmission.
+Cat 2 | 4Mbps | 10MHz | Token Ring | This cable and all further cables have a minimum of 8 wires (4 pairs). This cable was used in the token-ring network.
+Cat 3 | 10Mbps | 16MHz | 10BASE-T Ethernet | This is the first Ethernet cable that was used in LAN networks.
+Cat 4 | 20Mbps | 20MHz | Token Ring | This cable was used in advanced Token-ring networks.
+Cat 5 | 100Mbps | 100MHz | 100BASE-T Ethernet | This cable was used in advanced (fast) LAN networks.
+Cat 5e | 1000Mbps | 100MHz | 1000BASE-T Ethernet | This cable/category is the minimum requirement for all modern LAN networks.
+Cat 6 | 10Gbps | 250MHz | 10GBASE-T Ethernet | This cable uses a plastic core to prevent cross-talk between twisted-pair. It also uses a fire-resistant plastic sheath.
+Cat 6a | 10Gbps | 500MHz | 10GBASE-T Ethernet | This cable reduces attenuation and cross-talk. This cable also potentially removes the length limit. This is the recommended cable for all modern Ethernet LAN networks.
+Cat 7 | 10Gbps | 600MHz | Not drafted yet | This cable sets a base for further development. This cable uses multiple twisted-pair and shields each pair by its plastic sheath.
+<br>
 
 ## Netcat
 ---
