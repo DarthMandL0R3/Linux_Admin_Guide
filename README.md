@@ -43,6 +43,7 @@ limitations under the License.
   - [Cabling Technology](#cabling-technology)
     - [Coaxial Cable](#coaxial-cable)
     - [UTP & STP Cable](#utp--stp-cable)
+    - [Fiber Optic](#fiber-optic)
   - [## Netcat](#-netcat)
   - [## iptables](#-iptables)
   - [## firewalld](#-firewalld)
@@ -2268,6 +2269,38 @@ Cat 6 | 10Gbps | 250MHz | 10GBASE-T Ethernet | This cable uses a plastic core to
 Cat 6a | 10Gbps | 500MHz | 10GBASE-T Ethernet | This cable reduces attenuation and cross-talk. This cable also potentially removes the length limit. This is the recommended cable for all modern Ethernet LAN networks.
 Cat 7 | 10Gbps | 600MHz | Not drafted yet | This cable sets a base for further development. This cable uses multiple twisted-pair and shields each pair by its plastic sheath.
 <br>
+
+### Fiber Optic
+
+- Basic Elements
+  - The three basic elements of a fiber optic cable are the core, the cladding and the coating.
+
+Elements | Explanation
+---|---
+Core |This is the light transmission area of the fiber, either glass or plastic. Larger the core = More light that will be transmitted.
+Cladding | Provide a lower refractive index at the core interface in order to cause reflection within the core.
+Coating | Coatings are usually multi-layers of plastics applied to preserve fiber strength, absorb shock and provide extra fiber protection.
+<br>
+
+![Basic Elements](attachments/fiber-optic-cable-construction.png)
+
+- What Is `Dark Fiber`?
+  - The term dark fiber (often spelled dark fibre or called unlit fibre) most *commonly refers to installed fiber optic cabling that is not currently in use*.
+  - The term sometimes also refers to *privately operated fiber installations*.
+
+- Fiber Optic Modes
+
+![Fiber Modes](attachments/fiber-optic-cable-modes.png)
+
+  - SMF (Single-mode fiber)
+    - This cable carries only a single beam of light. This is more reliable and supports much higher bandwidth and longer distances than the MMF cable.
+    - This cable uses a laser as the light source and transmits 1300 or 1550 nano-meter wavelengths of light.
+
+  - MMF (multi-mode fiber)
+    - This cable carries multiple beams of light. Because of multiple beams, this cable carries much more data than the SMF cable. 
+    - This cable is used for shorter distances. 
+    - This cable uses an LED as the light source and transmits 850 or 1300 nano-meter wavelengths of light.
+
 
 ## Netcat
 ---
