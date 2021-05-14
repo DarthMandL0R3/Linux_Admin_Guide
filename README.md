@@ -2204,26 +2204,43 @@ Syntax | Explanation
 
 ![Cross Section of Coaxial Cable](attachments/csec-coaixal-cable.png)
 
-- Sheath
+- *Sheath*
   - This is the outer layer of the coaxial cable. It protects the cable from physical damage.
 
-- Braided shield
+- *Braided shield*
   - This shield protects signals from external interference and noise. This shield is built from the same metal that is used to build the core.
 
-- Insulation
+- *Insulation*
   - Insulation protects the core. It also keeps the core separate from the braided shield. Since both the core and the braided shield use the same metal, without this layer, they will touch each other and create a short-circuit in the wire.
 
-- Conductor
+- *Conductor*
   - The conductor carries electromagnetic signals. Based on conductor a coaxial cable can be categorized into two types; single-core coaxial cable and multi-core coaxial cable.
 
-- Single-core vs Multi-core
+- **Single-core vs Multi-core**
   - A single-core coaxial cable uses a single central metal (usually copper) conductor, while a multi-core coaxial cable uses multiple thin strands of metal wires.
 
 ![Single Core vs multi Core](attachments/single-core-multi-core-coaxial-cable.png)
 
+- Coaxial Categories
+
+Type | Ohms | AWG | Conductor | Description
+---|---|---|---|---
+RG-6 | 75 | 18 | Solid copper | Used in cable network to provide cable Internet service and cable TV over long distances.
+RG-8 | 50 | 10 | Solid copper | Used in the earliest computer networks. This cable was used as the backbone cable in the bus topology. In Ethernet standards, this cable is documented as the 10base5 Thicknet cable.
+RG-58 | 50 | 24 | Several thin strands of copper | This cable is thinner, easier to handle and install than the RG-8 cable. This cable was used to connect a system with the backbone cable. In Ethernet standards, this cable is documented as the 10base2 Thinnet cable.
+RG-59 | 75 | 20 - 22 | Solid copper | Used in cable networks to provide short-distance service.
+<br>
+
+- Coaxial cable uses RG rating to measure the materials used in shielding and conducting cores.
+- RG stands for the Radio Guide. Coaxial cable mainly uses radio frequencies in transmission.
+- Impedance is the resistance that controls the signals. It is expressed in the ohms.
+- AWG stands for American Wire Gauge. It is used to measure the size of the core. The larger the AWG size, the smaller the diameter of the core wire.
+
 ### UTP & STP Cable
 
 - UTP vs STP
+
+![STP and UTP Cables](attachments/stp-utp-cables.png)
 
 NO | UTP | STP
 --- | --- | ---
@@ -2237,9 +2254,9 @@ NO | UTP | STP
 8 | In UTP, attenuation is high in comparison to STP. | While in STP attenuation is low.
 <br>
 
-- Category of cables
+- UTP Categories
 
-Category/name of the cable | Maximum supported speed | Bandwidth/support signals rate | Ethernet standard | Description
+Categories | Maximum supported speed | Bandwidth rate | Ethernet standard | Description
 --- | --- | --- | --- | ---
 Cat 1 | 1Mbps | 1MHz | Not used for data | This cable contains only two pairs (4 wires). This cable was used in the telephone network for voice transmission.
 Cat 2 | 4Mbps | 10MHz | Token Ring | This cable and all further cables have a minimum of 8 wires (4 pairs). This cable was used in the token-ring network.
