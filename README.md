@@ -1174,6 +1174,8 @@ ln -s /path/to/original /path/to/symlink
 ## Storage Technology
 ---
 
+![NAS and SAN](attachments/nas-san.png)
+
 ### NAS VS SAN
 
 NAS | SAN
