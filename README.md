@@ -31,6 +31,10 @@ limitations under the License.
   - [## Hardware](#-hardware)
   - [## File System](#-file-system)
   - [## File Operations](#-file-operations)
+  - [## Storage Technology](#-storage-technology)
+    - [NAS VS SAN](#nas-vs-san)
+    - [Differences - NAS and SAN](#differences---nas-and-san)
+    - [NAS and SAN Use Cases](#nas-and-san-use-cases)
   - [## Performance](#-performance)
   - [## Systemd](#-systemd)
     - [systemctl](#systemctl)
@@ -1166,6 +1170,91 @@ ln -s /path/to/original /path/to/symlink
 * Find opened files on a mount point with fuser
 
         fuser -m /home
+
+## Storage Technology
+---
+
+### NAS VS SAN
+
+NAS | SAN
+---|---
+Typically used in homes and small to medium sized businesses. | Typically used in professional and enterprise environments.
+Less expensive	| More expensive
+Easier to manage | Requires more administration
+Data accessed as if it were a network-attached drive (files) | Servers access data as if it were a local hard drive (blocks)
+Speed dependent on local TCP/IP usually Ethernet network, typically 100 megabits to one gigabit per second. Generally slower throughput and higher latency due to slower file system layer. | High speed using Fibre Channel, 2 gigabits to 128 gigabits per second. Some SANs use iSCSI as a less expensive but slower alternative to Fibre Channel.
+I/O protocols: NFS, SMB/CIFS, HTTP | I/O protocols: SCSI, iSCSI, FCoE
+Lower-end not highly scalable; high-end NAS scale to petabytes using clusters or scale-out nodes | Network architecture enables admins to scale both performance and capacity as needed
+Does not work with virtualization | Works with virtualization
+Requires no architectural changes | Requires architectural changes
+Entry level systems often have a single point of failure, e.g. power supply | Fault tolerant network with redundant functionality
+Susceptible to network bottlenecks | Not affected by network traffic bottlenecks. Simultaneous access to cache, benefiting applications such as video editing.
+File backups and snapshots economical and schedulable. | Block backups and mirrors require more storage.
+<br>
+
+### Differences - NAS and SAN
+
+1)  `Fabric.` 
+    - NAS uses TCP/IP networks, most commonly Ethernet. Traditional SANs typically run on high speed Fibre Channel networks, although more SANs are adopting IP-based fabric because of FC’s expense and complexity. 
+    - High performance remains a SAN requirement and flash-based fabric protocols are helping to close the gap between FC speeds and slower IP.
+
+2)  `Data processing.` 
+    - The two storage architectures process data differently: NAS processes file-based data and SAN processes block data. 
+    - The story is not quite as straightforward as that of course: NAS may operate with a global namespace, and SANs have access to a specialized SAN file system. 
+    - A global namespace aggregates multiple NAS file systems to present a consolidated view. SAN file systems enable servers to share files. Within the SAN architecture, each server maintains a dedicated, non-shared LUN. 
+    - SAN file systems allow servers to safely share data by providing file-level access to servers on the same LUN.
+
+3)  `Protocols.` 
+       - NAS connects directly to an Ethernet network via a cable into an Ethernet switch. 
+       - NAS can use several protocols to connect with servers including NFS, SMB/CIFS, and HTTP. 
+       - On the SAN side, servers communicate with SAN disk drive devices using the SCSI protocol. 
+       - The network is formed using SAS/SATA fabrics, or mapping layers to other protocols such as Fibre Channel Protocol (FCP) that maps SCSI over Fibre Channel, or iSCSI that maps SCSI over TCP/IP.
+
+4)  `Performance.` 
+       - SANs are the higher performers for environments that need high-speed traffic such as high transaction databases and ecommerce websites. 
+       - NAS generally has lower throughput and higher latency because of its slower file system layer, but high-speed networks can make up for performance losses within NAS.
+
+5)  `Scalability.` 
+     - Entry level and NAS devices are not highly scalable, but high-end NAS systems scale to petabytes using clusters or scale-out nodes. 
+     - In contrast, scalability is a major driver for purchasing a SAN. 
+     - Its network architecture enables admins to scale performance and capacity in scale-up or scale-out configurations.
+
+6)  `Price.` 
+     - Although a high-end NAS will cost more than an entry-level SAN, in general NAS is less expensive to purchase and maintain. 
+     - NAS devices are considered appliances and have fewer hardware and software management components than a storage area network. 
+     - Administrative costs also figure into the equation. 
+     - SANs are more complex to manage with FC SANs on top of the complexity heap. 
+     - A rule of thumb is to figure 10 to 20 times the purchase cost as an annual maintenance calculation.
+
+7)  `Ease of management.` 
+     - In a one-to-one comparison, NAS wins the ease of management contest. The device easily plugs into the LAN and offers a simplified management interface. 
+     - SANs require more administration time than the NAS device.
+     - Deployment often requires making physical changes to the data center, and ongoing management typically requires specialized admins. 
+     - The exception to the SAN-is-harder argument is multiple NAS devices that do not share a common management console.
+
+### NAS and SAN Use Cases
+
+* `NAS`: **When you need to consolidate, centralize, and share.**
+
+  - `File storage and sharing.` This is NAS major use case in mid-sized, SMB, and enterprise remote offices. A single NAS device allows IT to consolidate multiple file servers for simplicity, ease of management, and space and energy savings.
+
+  - `Active archives.` Long-term archives are best stored on less expensive storage like tape or cloud-based cold storage. NAS is a good choice for searchable and accessible active archives, and high capacity NAS can replace large tape libraries for archives.
+
+  - `Big data.` Businesses have several choices for big data: scale-out NAS, distributed JBOD nodes, all-flash arrays, and object-based storage. Scale-out NAS is good for processing large files, ETL (extract, transform, load), intelligent data services like automated tiering, and analytics. NAS is also a good choice for large unstructured data such as video surveillance and streaming, and post-production storage.
+
+  - `Virtualization.` Not everyone is sold on using NAS for virtualization networks, but the usage case is growing and VMware and Hyper-V both support their datastores on NAS. This is a popular choice for new or small virtualization environments when the business does not already own a SAN.
+
+  - `Virtual desktop interface (VDI).` Mid-range and high-end NAS systems offer native data management features that support VDIsuch as fast desktop cloning and data deduplication.
+
+* `SAN`: **When you need to accelerate, scale, and protect.**
+
+  - `Databases and e-commerce websites.` General file serving or NAS will do for smaller databases, but high-speed transactional environments need the SAN’s high I/O processing speeds and very low latency. This makes SANs a good fit for enterprise databases and high traffic ecommerce websites.
+
+  - `Fast backup.` Server operating systems view the SAN as attached storage, which enables fast backup to the SAN. Backup traffic does not travel over the LAN since the server is backing up directly to the SAN. This makes for faster backup without increasing the load on the Ethernet network.
+
+  - `Virtualization.` NAS supports virtualized environments, but SANs are better suited to large-scale and/or high-performance deployments. The storage area network quickly transfers multiple I/O streams between VMs and the virtualization host, and high scalability enables dynamic processing.
+
+  - `Video editing.` Video editing applications need very low latency and very high data transfer rates. SANs provide this high performance because it cables directly to the video editing desktop client, dispensing with an extra server layer. Video editing environments need a third-party SAN distributed file system and per-node load balancing control.
 
 ## Performance
 ---
