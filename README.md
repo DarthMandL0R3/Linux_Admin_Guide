@@ -650,30 +650,30 @@ limitations under the License.
 
 * Show Memory information
 
-```
-cat /proc/meminfo
-```
+        ```
+        cat /proc/meminfo
+        ```
 
 * Show Number of Cores
 
-```
-lscpu
-```
+        ```
+        lscpu
+        ```
 
 * Hardware Info
 
-```
-cat /proc/cpuinfo                  # CPU model
-cat /proc/meminfo                  # Hardware memory
-grep MemTotal /proc/meminfo        # Display the physical memory
-watch -n1 'cat /proc/interrupts'   # Watch changeable interrupts continuously
-free -m                            # Used and free memory (-m for MB)
-cat /proc/devices                  # Configured devices
-lspci -tv                          # Show PCI devices
-lsusb -tv                          # Show USB devices
-lshal                              # Show a list of all devices with their properties
-dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
-```
+        ```
+        cat /proc/cpuinfo                  # CPU model
+        cat /proc/meminfo                  # Hardware memory
+        grep MemTotal /proc/meminfo        # Display the physical memory
+        watch -n1 'cat /proc/interrupts'   # Watch changeable interrupts continuously
+        free -m                            # Used and free memory (-m for MB)
+        cat /proc/devices                  # Configured devices
+        lspci -tv                          # Show PCI devices
+        lsusb -tv                          # Show USB devices
+        lshal                              # Show a list of all devices with their properties
+        dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
+        ```
 
 ### Network Related Commands
 
@@ -721,28 +721,28 @@ dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
 
 * Checking if system time is syncing with NTP
 
-```
-timedatectl                 # Check command
-timedatectl set-ntp true    # Set NTP true
-```
+        ```
+        timedatectl                 # Check command
+        timedatectl set-ntp true    # Set NTP true
+        ```
 
 * Sync NTP time
 
-```
-sudo service ntp stop
-sudo ntpdate -s time.nist.gov
-sudo service ntp start
-```
+        ```
+        sudo service ntp stop
+        sudo ntpdate -s time.nist.gov
+        sudo service ntp start
+        ```
 
 * Sync NTP time with chrony
 
-```
-sudo yum install chrony
-sudo systemctl enable chronyd
-sudo systemctl start chronyd
-chronyc tracking
-chronyc sources
-```
+        ```
+        sudo yum install chrony
+        sudo systemctl enable chronyd
+        sudo systemctl start chronyd
+        chronyc tracking
+        chronyc sources
+        ```
 
 ## File System
 ---
