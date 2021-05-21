@@ -26,8 +26,14 @@ limitations under the License.
 - [Linux Admin Guide](#linux-admin-guide)
   - [## Table Of Contents](#-table-of-contents)
   - [## Boot](#-boot)
+    - [Boot Stages](#boot-stages)
+    - [Systemd / System V](#systemd--system-v)
   - [## Process](#-process)
+    - [Theory](#theory)
+    - [Process Commands](#process-commands)
   - [## User and Group Administration](#-user-and-group-administration)
+    - [Theory](#theory-1)
+    - [Related Commands](#related-commands)
   - [## Hardware](#-hardware)
   - [## File System](#-file-system)
   - [## File Operations](#-file-operations)
@@ -78,7 +84,9 @@ limitations under the License.
 ## Boot
 ---
 
-* 6 Levels to booting
+### Boot Stages
+
+* 6 Stages to Load Linux OS
     - BIOS
     - MBR
     - GRUB
@@ -195,6 +203,9 @@ limitations under the License.
       - S80sendmail is to start the sendmail daemon, which has the sequence number of 80.
       - So, syslog program will be started before sendmail.
 
+
+### Systemd / System V
+
 * System Startup Files
     ```
     /etc/rc.d    - Scripts run from this subdir
@@ -224,12 +235,6 @@ limitations under the License.
     pidof systemd && echo "systemd" || echo "other"
     ```
 
-* Show Current Runlevel
-    ```
-    runlevel
-    who -r
-    ```
-
 * Systemd Targets
 
 > Run-level in the classic SysVinit program| Description | Equivalent target-unit in the systemd program
@@ -243,6 +248,12 @@ limitations under the License.
 >6 	| Shutdown all services and reboot the system. | reboot.target
 
 <br> 
+
+* Show Current Runlevel
+    ```
+    runlevel
+    who -r
+    ```
 
 * Change default runlevel
     ```
@@ -259,6 +270,8 @@ limitations under the License.
 
 ## Process
 ---
+
+### Theory
 
 * Process States
 
@@ -328,6 +341,8 @@ limitations under the License.
   - User processes sends an interupt to kernel if it wasn’t to write a file. 
   - Rings are utilize so programs that they do not interfere with each other.
 
+### Process Commands 
+
 * Killing Processes
 
     - Common KILL signlas
@@ -384,22 +399,7 @@ limitations under the License.
 ## User and Group Administration
 ---
 
-* Become system administrator:
-
-    ```
-    sudo -s
-    sudo su
-    ```
-
-  - The accounts capable of using sudo are specified in ```/etc/sudoers```, which is edited with the ```visudo``` utility.
-  - By default, relevant logs are written to ```/var/log/secure```.
-
-* Switch user
-
-    ```
-    su - user2
-    ```
-  - Argument "-" provides an environment similar to what the user would expect had the user logged in directly.
+### Theory
 
 * Password file syntax
 
@@ -427,6 +427,25 @@ limitations under the License.
         - Although useradd --system foouser creates no home directory for that user. 
     - Service accounts often don't have a "proper" login shell, i.e. they have /usr/sbin/nologin. 
     - Moreover, service accounts are typically locked, i.e. it is not possible to login (for traditional /etc/passwd and /etc/shadow this can be achieved by setting the password hash to arbitrary values such as * or x)
+
+### Related Commands
+
+* Become system administrator:
+
+    ```
+    sudo -s
+    sudo su
+    ```
+
+  - The accounts capable of using sudo are specified in ```/etc/sudoers```, which is edited with the ```visudo``` utility.
+  - By default, relevant logs are written to ```/var/log/secure```.
+
+* Switch user
+
+    ```
+    su - user2
+    ```
+  - Argument "-" provides an environment similar to what the user would expect had the user logged in directly.
 
 * Change password
 
