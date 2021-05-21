@@ -35,6 +35,10 @@ limitations under the License.
     - [Theory](#theory-1)
     - [Related Commands](#related-commands)
   - [## Hardware](#-hardware)
+    - [System Related Commands](#system-related-commands)
+    - [Network Related Commands](#network-related-commands)
+    - [Filesystems Related](#filesystems-related)
+    - [Time Settings Related](#time-settings-related)
   - [## File System](#-file-system)
   - [## File Operations](#-file-operations)
   - [## Storage Technology](#-storage-technology)
@@ -564,6 +568,8 @@ limitations under the License.
 ## Hardware
 ---
 
+### System Related Commands
+
 * Print full date and time:
     ```
     date
@@ -627,21 +633,62 @@ limitations under the License.
     sysreport
     ```
 
+* Dump info about keyboard drivers:
+    ```
+    dumpkeys
+    ```
+
+* Show default kernel
+    ```
+    grubby –default-kernel
+    ```
+
+* Modify kernel parameters
+    ```
+    nano /etc/sysctl.conf
+    ```
+
+* Show Memory information
+
+```
+cat /proc/meminfo
+```
+
+* Show Number of Cores
+
+```
+lscpu
+```
+
+* Hardware Info
+
+```
+cat /proc/cpuinfo                  # CPU model
+cat /proc/meminfo                  # Hardware memory
+grep MemTotal /proc/meminfo        # Display the physical memory
+watch -n1 'cat /proc/interrupts'   # Watch changeable interrupts continuously
+free -m                            # Used and free memory (-m for MB)
+cat /proc/devices                  # Configured devices
+lspci -tv                          # Show PCI devices
+lsusb -tv                          # Show USB devices
+lshal                              # Show a list of all devices with their properties
+dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
+```
+
+### Network Related Commands
+
 * Dump captured data off of wireless card:
 
     ```
     dumpcap
     ```
 
-* Dump info about keyboard drivers:
-    ```
-    dumpkeys
-    ```
-
 * Print information about ethernet
     ```
     ethtool
     ```
+
+### Filesystems Related
 
 * Make a bootable USB
     ```
@@ -658,16 +705,6 @@ limitations under the License.
     /opt/myswap swap swap defaults 0 0
     ```
 
-* Show default kernel
-    ```
-    grubby –default-kernel
-    ```
-
-* Modify kernel parameters
-    ```
-    nano /etc/sysctl.conf
-    ```
-
 * Backup & Restore MBR
     ```
     Backup: dd if=/dev/sda of=/tmp/mbr.img_backup bs=512 count=1
@@ -680,6 +717,7 @@ limitations under the License.
     2. ```The partiton table``` which is 64 bytes long
     3. ```The boot code signature``` which is 2 bytes long.
 
+### Time Settings Related
 
 * Checking if system time is syncing with NTP
 
@@ -704,33 +742,6 @@ sudo systemctl enable chronyd
 sudo systemctl start chronyd
 chronyc tracking
 chronyc sources
-```
-
-* Show Memory information
-
-```
-cat /proc/meminfo
-```
-
-* Show number of cores
-
-```
-lscpu
-```
-
-* Hardware Info
-
-```
-cat /proc/cpuinfo                  # CPU model
-cat /proc/meminfo                  # Hardware memory
-grep MemTotal /proc/meminfo        # Display the physical memory
-watch -n1 'cat /proc/interrupts'   # Watch changeable interrupts continuously
-free -m                            # Used and free memory (-m for MB)
-cat /proc/devices                  # Configured devices
-lspci -tv                          # Show PCI devices
-lsusb -tv                          # Show USB devices
-lshal                              # Show a list of all devices with their properties
-dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
 ```
 
 ## File System
