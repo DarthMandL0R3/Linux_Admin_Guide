@@ -266,11 +266,14 @@ limitations under the License.
     ```
 
 * Change runlevel
-    ```
-    init 1 (Single user mode)
-    ```
 
-*Further reference: [Systemd Essentials](https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal)
+        init 1 (Single user mode)
+
+* Shutdown after 10 minutes.
+
+        shutdown -h +10
+
+* Further reference: [Systemd Essentials](https://www.digitalocean.com/community/tutorials/systemd-essentials-working-with-services-units-and-the-journal)
 
 ## Process
 ---
@@ -1166,17 +1169,15 @@ wtmp			|		User logins and logouts
 
 * Symbolic Links
 
-```
-┌── ln(1) link, ln -- make links
-│   ┌── Create a symbolic link.
-│   │                         ┌── the path to the intended symlink
-│   │                         │   can use . or ~ or other relative paths
-│   │                   ┌─────┴────────┐
-ln -s /path/to/original /path/to/symlink
-      └───────┬───────┘
-              └── the path to the original file/folder
-                  can use . or ~ or other relative paths
-```
+        ┌── ln(1) link, ln -- make links
+        │   ┌── Create a symbolic link.
+        │   │                         ┌── the path to the intended symlink
+        │   │                         │   can use . or ~ or other relative paths
+        │   │                   ┌─────┴────────┐
+        ln -s /path/to/original /path/to/symlink
+        └───────┬───────┘
+                └── the path to the original file/folder
+                        can use . or ~ or other relative paths
 
 * Change the open files limit from 1024 to 10240 d
 
@@ -1985,8 +1986,18 @@ Key | Explanation
 
 * Variables
 
-    MESSAGE="Hello World"   # Assign a string
-    PI=3.1415               # Assign a decimal number
+        MESSAGE="Hello World"   # Assign a string
+        PI=3.1415               # Assign a decimal number
+
+        echo $PATH              #shows path variable
+        export -p               #shows all defined
+        export MYAPP=1          #sets variable my app to value 1
+        EDITOR="nano"
+
+* Add path to system path
+
+        export PATH = $PATH:/usr/local/bin
+
 
 * Set variable
 
