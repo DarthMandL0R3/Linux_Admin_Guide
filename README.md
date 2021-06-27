@@ -460,6 +460,10 @@ limitations under the License.
     passwd <username>
     ```
 
+* Change `root` password
+
+
+
 * Change password expiration
 
     ```
@@ -890,6 +894,7 @@ limitations under the License.
 
     - Reference:
       - [Backup LVM Configuration](https://linoxide.com/how-to-backup-lvm-configuration-on-linux/#:~:text=The%20vgcfgrestore%20command%20restores%20LVM,is%20activated%20in%20shared%20mode.)
+      - [Increase or Decrease LVM](https://www.golinuxcloud.com/resize-root-lvm-partition-extend-shrink-rhel/)
 <br>
 
 * Raid Levels
@@ -3656,7 +3661,7 @@ MyISAM is simpler and better optimized for read only operations. It has limited 
 
 * Create a new Database
 
-        mysqladmin -u root -pmyPassword -v create myDB
+        mysqladmin -u root -p myPassword -v create myDB
 
 * Show databases:
 
