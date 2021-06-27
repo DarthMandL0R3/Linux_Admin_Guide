@@ -775,8 +775,44 @@ limitations under the License.
 
 * Show inodes of files and folders
 
+        df -i
         ls -i
         stat
+
+* Clean inodes if inodes is full (Cant create new files in filesystem)
+
+   - Result: `Disk cannot be written`
+   - **Why?**
+     - Log files (error logs/admin logs)
+     - PHP session files
+     - mod cache disk (Apache/Nginx)
+   - How to tackle 
+        
+  ```
+  General
+  --------
+  for i in /*; do echo $i; find $i |wc -l; done
+  
+  Drill down in /var
+  ------------------
+  for i in /var/*; do echo $i; find $i |wc -l; done
+
+  Found /var/cache/apache2/modcachedisk is using 100% inodes.
+  
+  Remove the files and folder
+  ---------------------------
+  rm -rf /var/cache/apache2/modcachedisk
+
+  Restart Apache and server
+  -------------------------
+  service apache2 restart
+  reboot
+  ```
+
+  - References:
+    - [DO Clear inodes](https://www.digitalocean.com/community/questions/best-way-to-clear-inodes)
+    - [Toolbox Forum inodes](https://www.toolbox.com/tech/operating-systems/question/how-to-clean-up-inodes-112612/)
+<br>
 
 * Display mountpounts
 
@@ -841,6 +877,20 @@ limitations under the License.
 * Resize Filesystem
 
         resize2fs
+
+*  LVM Backup and Restore
+
+        Backup
+        ------
+        vgcfgbackup [-f path_newfilename ] vg_name
+
+        Restore
+        -------
+        vgcfgrestore [-f|--file <filename>] [-t|--test] [-v] vg_name
+
+    - Reference:
+      - [Backup LVM Configuration](https://linoxide.com/how-to-backup-lvm-configuration-on-linux/#:~:text=The%20vgcfgrestore%20command%20restores%20LVM,is%20activated%20in%20shared%20mode.)
+<br>
 
 * Raid Levels
 
@@ -1196,6 +1246,10 @@ wtmp			|		User logins and logouts
     cat /etc/sysctl.conf       |        # Show default system wide limits config
     fs.file-max=102400         |        # Permanent entry in sysctl.conf
     cat /proc/sys/fs/file-nr   |        # How many file descriptors are in use
+
+    - Reference:
+      - [Tecmint Sysctl](https://www.tecmint.com/change-modify-linux-kernel-runtime-parameters/)
+
 <br>
 
 * Find opened files on a mount point with fuser
