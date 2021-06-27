@@ -1082,6 +1082,31 @@ Type | Explanation | Required Disk (at least) | Benefits | Cons
 
         namei -om /var/www/iddb.com/static
 
+* Making files immutable `chattr`
+
+        Show file attributes
+        ---------------------
+        lsattr
+
+        Make file(s) immutable
+        -----------------------
+        chattr +i /etc/passwd
+
+        Unset immutable attribute
+        -------------------------
+        chattr -i /etc/passwd
+
+        Append data without modifying
+        -----------------------------
+        chattr +a example.txt
+
+        Secure Directory
+        ----------------
+        chattr -R +i myfolder
+
+  - Reference:
+    - [Techmint chattr](https://www.tecmint.com/chattr-command-examples/)
+
 * Remove directory
 
         rmdir directory
