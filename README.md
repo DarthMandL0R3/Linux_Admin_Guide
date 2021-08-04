@@ -462,7 +462,30 @@ limitations under the License.
 
 * Change `root` password
 
+        Access Boot (GRUB) Menu
+        ------------------------
+        init 6
 
+        Edit Boot Options
+        ------------------
+        1. Press 'e' at the needed highlighted kernel entry
+        2. For RHEL/CentOS 7, the line starts with 'linux16'.
+        3. For RHEL/Centos 8, and Fedora the line starts with 'linux'.
+        4. Add 'rd.break' at the end of that line
+        5. Hit Ctrl+X for reboot.
+
+        After Reboot
+        ------------
+        mount -o remount rw /sysroot
+        chroot /sysroot
+        passwd
+        touch /.autorelabel
+        exit
+        reboot
+
+  - References:
+    - [RedHat Recover root Password](https://www.redhat.com/sysadmin/recover-root-passwd)
+    - [Unixmen Reset root Password](https://www.unixmen.com/reset-root-password-centos-7/)
 
 * Change password expiration
 
@@ -1304,7 +1327,7 @@ I/O protocols: NFS, SMB/CIFS, HTTP | I/O protocols: SCSI, iSCSI, FCoE
 Lower-end not highly scalable; high-end NAS scale to petabytes using clusters or scale-out nodes | Network architecture enables admins to scale both performance and capacity as needed
 Does not work with virtualization | Works with virtualization
 Requires no architectural changes | Requires architectural changes
-Entry level systems often have a single point of failure, e.g. power supply | Fault tolerant network with redundant functionality
+Entry level systems often have a single point of failure, e.g. power supply | Fault tolerant network with redundant functionality due to SAN Fabric Switch.
 Susceptible to network bottlenecks | Not affected by network traffic bottlenecks. Simultaneous access to cache, benefiting applications such as video editing.
 File backups and snapshots economical and schedulable. | Block backups and mirrors require more storage.
 <br>
