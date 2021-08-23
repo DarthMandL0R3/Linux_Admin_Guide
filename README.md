@@ -680,19 +680,15 @@ limitations under the License.
 
 * Show Memory information
 
-        ```
+        
         cat /proc/meminfo
-        ```
 
 * Show Number of Cores
 
-        ```
         lscpu
-        ```
 
-* Hardware Info
+* Common Hardware Info
 
-        ```
         cat /proc/cpuinfo                  # CPU model
         cat /proc/meminfo                  # Hardware memory
         grep MemTotal /proc/meminfo        # Display the physical memory
@@ -703,7 +699,12 @@ limitations under the License.
         lsusb -tv                          # Show USB devices
         lshal                              # Show a list of all devices with their properties
         dmidecode                          # Show DMI/SMBIOS: hw info from the BIOS
-        ```
+
+* Hardware Virtulaization Enabled
+
+        egrep -wo 'vmx|ept|vpid|npt|tpr_shadow|flexpriority|vnmi|lm|aes' /proc/cpuinfo  | sort | uniq\ 
+        | sed -e 's/aes/Hardware encryption=Yes (&)/g' \ 
+        -e 's/lm/64 bit cpu=Yes (&)/g' -e 's/vmx/Intel hardware virtualization=Yes (&)/g'
 
 ### Network Related Commands
 
@@ -751,28 +752,22 @@ limitations under the License.
 
 * Checking if system time is syncing with NTP
 
-        ```
         timedatectl                 # Check command
         timedatectl set-ntp true    # Set NTP true
-        ```
 
 * Sync NTP time
 
-        ```
         sudo service ntp stop
         sudo ntpdate -s time.nist.gov
         sudo service ntp start
-        ```
 
 * Sync NTP time with chrony
 
-        ```
         sudo yum install chrony
         sudo systemctl enable chronyd
         sudo systemctl start chronyd
         chronyc tracking
         chronyc sources
-        ```
 
 ## File System
 ---
