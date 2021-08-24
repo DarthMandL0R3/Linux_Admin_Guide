@@ -67,6 +67,8 @@ limitations under the License.
   - [## Python](#-python)
   - [## Sshuttle](#-sshuttle)
   - [## Mitmproxy](#-mitmproxy)
+  - [## Tmux](#-tmux)
+    - [Common Usage and Key Binds](#common-usage-and-key-binds)
   - [## Screen](#-screen)
   - [## Cron](#-cron)
   - [## SSH](#-ssh)
@@ -80,7 +82,6 @@ limitations under the License.
   - [## Rsync](#-rsync)
   - [## Nginx](#-nginx)
   - [## Rsyslog](#-rsyslog)
-  - [## Tmux](#-tmux)
   - [## vim](#-vim)
   - [## SQL](#-sql)
   - [## Node Exporter Monitoring](#-node-exporter-monitoring)
@@ -2933,6 +2934,33 @@ yum list installed
         netstat -antp | grep SYN_RECV|awk '{print $4}'|sort|uniq -c | sort -n
 ```
 
+## Tmux
+---
+
+### Common Usage and Key Binds
+
+* Commands
+
+        tmux ls = list sessions
+        tmux new -s <session_name> = new session
+        tmux attach -t <session_name> = attach to old session, keep existing sessions open
+        tmux kill-session -t <session_name> = kill session
+
+* Keys
+
+        Ctrl-b-?   = see bindings
+        Ctrl-b-d   = detach from current session
+        Ctrl-b-n   = creates new window
+        Ctrl-b-0   = go to window 0
+        Ctrl-b-tab = toggle between windows
+        Ctrl-b-c   = create new window
+        Ctrl-b-x   = close current window/pane
+        Ctrl-b-o   = switch to other pane
+        Ctrl-b-q   = show panes
+        Ctrl-b-%  = new vertical pane
+        Ctrl-b+"  = new horizontal pane
+        Ctrl-b-arrow   = switch panes
+
 ## Screen
 ---
 * Config File
@@ -4272,31 +4300,6 @@ Check out more resources below to learn about other stuff jq can do!
 
         *.*             @@logs-01.loggly.com:514;LogglyFormat
 
-## Tmux
----
-
-* Commands
-
-        tmux ls = list sessions
-        tmux new = new session
-        tmux attach = attach to old session, keep existing sessions open
-        tmux attach -b =  attach to session, disconnect other connections
-        tmux kill-session
-
-* Keys
-
-        Ctrl-b-d = detach from current session
-        Ctrl-b-n  = creates new window
-        Ctrl-b-0 = go to window 0
-        Ctrl-b-tab = toggle between windows
-        Ctrl-b-c = create new window
-        Ctrl-b-? = see bindings
-        Ctrl-b-x = close current window/pane
-        Ctrl-b-o = switch to other pane
-        Ctrl-b-q = show panes
-        Ctrl-b-V = new vertical pane
-        Ctrl-b-arrow = switch panes
-        Ctrl-b-[-arrow = scroll
 
 ## vim
 ---
