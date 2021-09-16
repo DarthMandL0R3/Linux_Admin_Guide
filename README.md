@@ -2969,21 +2969,22 @@ yum list installed
 
 * Commands
 
-        screen -ls    # show all screens
-        CTRL a w      # which screens are available
-        CTRL a 0      # go to window 0
-        CTRL a 1      # go to window 1
-        CTRl a D      # detach from current session
-        CTRL a c      # create a new screen
-        CTRL a n      # go to next screen
-        CTRL a A      # rename session name
-        CTRL a S      # split screen horizontal
-        CTRL a TAB    # move to next split screen
-        CTRL a |      # split screen vertical
-        CTRL A X      # close current split screen
-        CTRL A -      # switches to last window
-        Exit          # kill current session
-        screen -r     # reattach to screen
+        screen -ls         # show all screens
+        screen -S <name>   # add new screen session
+	CTRL a w           # which screens are available
+        CTRL a 0           # go to window 0
+        CTRL a 1           # go to window 1
+        CTRl a D           # detach from current session
+        CTRL a c           # create a new screen
+        CTRL a n           # go to next screen
+        CTRL a A           # rename session name
+        CTRL a S           # split screen horizontal
+        CTRL a TAB         # move to next split screen
+        CTRL a |           # split screen vertical
+        CTRL A X           # close current split screen
+        CTRL A -           # switches to last window
+        Exit               # kill current session
+        screen -r          # reattach to screen
 
 ## Cron
 ---
