@@ -2968,7 +2968,8 @@ yum list installed
         ~/.screenrc
 
 * Commands
-
+* 
+~~~
         screen -ls         # show all screens
         screen -S <name>   # add new screen session
 	CTRL a w           # which screens are available
@@ -2985,6 +2986,7 @@ yum list installed
         CTRL A -           # switches to last window
         Exit               # kill current session
         screen -r          # reattach to screen
+~~~
 
 ## Cron
 ---
