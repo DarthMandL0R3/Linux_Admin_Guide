@@ -2968,7 +2968,6 @@ yum list installed
         ~/.screenrc
 
 * Commands
-* 
 ~~~
         screen -ls         # show all screens
         screen -S <name>   # add new screen session
